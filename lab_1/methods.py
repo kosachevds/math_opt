@@ -154,3 +154,43 @@ def nuton(derivative1, derivative2, x0, eps):
             return (None, None)
         x = x - f_1 / f_2
 
+
+def nuton_rafson(derivative1, derivative2, x0, eps):
+    x = x0
+    count = 0
+    while True:
+        f_1 = derivative1(x)
+        count += 1
+        if abs(f_1) <= eps:
+            return (x, count)
+        f_2 = derivative2(x)
+        count += 1
+        f_1_ = derivative1(x - f_1 / f_2)
+        count += 1
+        if count > 1000:
+            return (None, None)
+        tau = (f_1 ** 2) / (f_1 ** 2 + f_1_ ** 2)
+        x = x - tau * f_1 / f_2
+
+
+def marquardt(derivative1, derivative2, x0, eps):
+    x = x0
+    count = 0
+    mu = None
+    while True:
+        f_1 = derivative1(x)
+        count += 1
+        if abs(f_1) <= eps:
+            return (x, count)
+        f_2 = derivative2(x)
+        if mu is None:
+            mu = 10 * abs(f_2)
+        elif f_1 < 0 and f_1 * f_2 < 0:
+            mu /= mu
+        else:
+            mu *= 2
+        count += 1
+        if count > 1000:
+            return (None, None)
+        tk = 0.5
+        x = x - 0.5 * f_1 / (f_2 + mu)
