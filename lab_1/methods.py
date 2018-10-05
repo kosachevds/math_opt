@@ -3,37 +3,37 @@ import numpy as np
 
 def enumerative(function, begin, end, eps):
     previous = function(begin)
-    n = 1
+    count = 1
     for x in np.arange(begin + eps, end, eps):
         current = function(x)
-        n += 1
+        count += 1
         if current > previous:
-            return (x - eps, n)
+            return (x - eps, count)
         previous = current
-    return (end, n)
+    return (end, count)
 
 
 def radix(function, begin, end, eps):
-    n = 0
+    count = 0
     while end - begin > eps:
         step = (end - begin) / 4.0
         previous = function(begin)
-        n += 1
+        count += 1
         for x in np.linspace(begin + step, end, num=4):
             current = function(x)
-            n += 1
+            count += 1
             if current < previous:
                 previous = current
                 continue
             end = x
             begin = x - step
             break
-    return ((begin + end) / 2.0, n)
+    return ((begin + end) / 2.0, count)
 
 
 def dichotomy(function, begin, end, eps):
     delta = eps
-    n = 0
+    count = 0
     while (end - begin) / 2.0 > eps:
         x1 = (begin + end - delta) / 2.0
         x2 = (begin + end + delta) / 2.0
@@ -41,8 +41,8 @@ def dichotomy(function, begin, end, eps):
             end = x2
         else:
             begin = x1
-        n += 2
-    return ((begin + end) / 2.0, n)
+        count += 2
+    return ((begin + end) / 2.0, count)
 
 
 def golden_ratio(function, begin, end, eps):
@@ -51,7 +51,7 @@ def golden_ratio(function, begin, end, eps):
     f1 = function(x1)
     x2 = tau * (end - begin)
     f2 = function(x2)
-    n = 2
+    count = 2
     while (end - begin) / 2.0 > eps:
         if f1 <= f2:
             end = x2
@@ -65,8 +65,8 @@ def golden_ratio(function, begin, end, eps):
             f1 = f2
             x2 = end - tau * (end - begin)
             f2 = function(x2)
-        n += 1
-    return ((begin + end) / 2.0, n)
+        count += 1
+    return ((begin + end) / 2.0, count)
 
 
 def parabolic(function, begin, end, eps):
@@ -77,14 +77,14 @@ def parabolic(function, begin, end, eps):
     f2 = function(x2)
     x3 = end - step
     f3 = function(x3)
-    n = 3
+    count = 3
     previous = None
     while True:
         a1 = (f2 - f1) / (x2 - x1)
         a2 = ((f3 - f1) / (x3 - x1) - a1) / (x3 - x2)
         x_ = 0.5 * (x1 + x2 - a1 / a2)
         f_ = function(x_)
-        n += 1
+        count += 1
         if x_ < x2:
             if f_ >= f2:
                 x1 = x_
@@ -104,18 +104,18 @@ def parabolic(function, begin, end, eps):
                 x2 = x_
                 f2 = f_
         if previous is not None and abs(x_ - previous) < eps:
-            return (x_, n)
+            return (x_, count)
         previous = x_
 
 
 def middle_point(derivative, begin, end, eps):
-    n = 0
+    count = 0
     while True:
         middle = (begin + end) / 2.0
         fm = derivative(middle)
-        n += 1
+        count += 1
         if abs(fm) < eps:
-            return (middle, n)
+            return (middle, count)
         if fm > 0:
             end = middle
         else:
@@ -125,13 +125,13 @@ def middle_point(derivative, begin, end, eps):
 def chords(derivative, begin, end, eps):
     db = derivative(begin)
     de = derivative(end)
-    n = 2
+    count = 2
     while True:
         x = begin - db / (db - de) * (begin - end)
         dx = derivative(x)
-        n += 1
+        count += 1
         if abs(dx) < eps:
-            return (x, n)
+            return (x, count)
         if dx > 0:
             end = x
             de = dx
@@ -142,12 +142,15 @@ def chords(derivative, begin, end, eps):
 
 def nuton(derivative1, derivative2, x0, eps):
     x = x0
-    n = 0
+    count = 0
     while True:
         f_1 = derivative1(x)
-        n += 1
+        count += 1
         if abs(f_1) <= eps:
-            return (x, n)
+            return (x, count)
         f_2 = derivative2(x)
-        n += 1
+        count += 1
+        if count > 1000:
+            return (None, None)
         x = x - f_1 / f_2
+
