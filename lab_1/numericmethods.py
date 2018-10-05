@@ -42,5 +42,7 @@ def nuton(function, x0, eps):
             return (x, count)
         f_0 = function(x)
         count += 1
+        if count > 1000:
+            return (None, None)
         dx2 = (f_1 - 2 * f_0 + f_2) / (eps * eps)
         x = x - dx1 / dx2
