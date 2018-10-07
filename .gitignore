@@ -171,3 +171,5 @@ atlassian-ide-plugin.xml
 # Cursive Clojure plugin
 .idea
 .vscode
+
+*.pdf
