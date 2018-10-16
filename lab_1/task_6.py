@@ -51,7 +51,7 @@ def enumerative(func, begin, end, eps):
 
 
 def broken_lines(func, begin, end, eps):
-    const_l, count = get_l_const(func, begin, end, 8);
+    const_l, count = get_l_const(func, begin, end, 8)
     f_b = func(begin)
     f_e = func(end)
     count += 2
