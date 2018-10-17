@@ -41,3 +41,16 @@ def conjugate_gradient(func, gradient, x0, eps):
         k += 1
         grad_k = grad_next
         p_k = -grad_k + beta * p_k
+
+
+def nuton(gradient, hessian, x0, eps):
+    x_k = x0
+    count = 0
+    while True:
+        gradient_k = gradient(x_k)
+        count += 1
+        if linalg.norm(gradient_k) < eps:
+            return x_k
+        inv_hessian = linalg.inv(hessian(x_k))
+        count += 1
+        x_k = x_k - inv_hessian * gradient_k
