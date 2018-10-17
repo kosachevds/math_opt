@@ -54,3 +54,7 @@ def nuton(gradient, hessian, x0, eps):
         inv_hessian = linalg.inv(hessian(x_k))
         count += 1
         x_k = x_k - inv_hessian * gradient_k
+
+
+def regular_simplex():
+    pass
