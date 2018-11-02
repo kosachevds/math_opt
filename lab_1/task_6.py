@@ -6,25 +6,25 @@ def main():
     epsilon = 1e-4
     x_list = np.linspace(1, 12, 100)
     pp.subplot(2, 1, 1)
-    pp.xlabel("X")
-    pp.ylabel("f(X)")
-    pp.plot(x_list, function1(x_list))
-    for x in enumerative(function1, x_list[0], x_list[-1], epsilon):
-        pp.plot(x, function1(x), marker="o", color="g")
-    x = broken_lines(function1, x_list[0], x_list[-1], epsilon)[0]
-    pp.plot(x, function1(x), marker="+", color="r")
+    plot_task(function1, x_list, epsilon)
 
-    x_list = np.linspace(0, 4, 100)
     pp.subplot(2, 1, 2)
-    pp.xlabel("X")
-    pp.ylabel("f(X)")
-    pp.plot(x_list, function2(x_list))
-    for x in enumerative(function2, x_list[0], x_list[-1], epsilon):
-        pp.plot(x, function2(x), marker="o", color="g")
-    x = broken_lines(function2, x_list[0], x_list[-1], epsilon)[0]
-    pp.plot(x, function2(x), marker="+", color="r")
+    x_list = np.linspace(0, 4, 100)
+    plot_task(function2, x_list, epsilon)
 
     pp.show()
+
+
+def plot_task(func, x_list, epsilon):
+    pp.xlabel("X")
+    pp.ylabel("f(X)")
+    pp.plot(x_list, func(x_list))
+    x = np.array(enumerative(func, x_list[0], x_list[-1], epsilon))
+    y_list = func(x)
+    pp.plot(x, y_list, "go", label="enumerative")
+    x = broken_lines(func, x_list[0], x_list[-1], epsilon)[0]
+    pp.plot(x, func(x), "r+", label="broken_lines")
+    pp.legend()
 
 
 def function1(x):

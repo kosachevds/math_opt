@@ -8,18 +8,22 @@ X_END = 1.5
 
 
 def main():
-    # pp.figure(0)
-    # x_list = np.linspace(X_BEGIN, X_END)
-    # pp.plot(x_list, function(x_list))
-    # pp.xlabel("x")
-    # pp.ylabel("f(x)")
-    # pp.title("function")
+    # plot_function(function, X_BEGIN, X_END, 0)
 
     # plot_perfomance(1, 2)
 
     plot_numeric_vs_analytic(3)
 
     pp.show()
+
+
+def plot_function(func, x0, x1, fig_id):
+    pp.figure(fig_id)
+    x_list = np.linspace(x0, x1)
+    pp.plot(x_list, func(x_list))
+    pp.xlabel("x")
+    pp.ylabel("f(x)")
+    pp.title("function")
 
 
 def get_count(func, eps):
@@ -94,34 +98,37 @@ def plot_numeric_vs_analytic(figure_id):
     counts = [middle_point(derivative1, X_BEGIN, X_END, eps)[1]
               for eps in eps_list]
     pp.subplot(1, columns, 1)
-    pp.plot(eps_list, counts)
+    pp.plot(eps_list, counts, label='analytic')
     counts = [nm.middle_point(function, X_BEGIN, X_END, eps)[1]
               for eps in eps_list]
-    pp.plot(eps_list, counts)
+    pp.plot(eps_list, counts, label='numeric')
     pp.ylabel("N")
     pp.xlabel("epsilon")
     pp.title("middle point")
+    pp.legend()
     pp.gca().invert_xaxis()
 
     counts = [chords(derivative1, X_BEGIN, X_END, eps)[1] for eps in eps_list]
     pp.subplot(1, columns, 2)
-    pp.plot(eps_list, counts)
+    pp.plot(eps_list, counts, label='analytic')
     counts = [nm.chords(function, X_BEGIN, X_END, eps)[1] for eps in eps_list]
-    pp.plot(eps_list, counts)
+    pp.plot(eps_list, counts, label='numeric')
     pp.ylabel("N")
     pp.xlabel("epsilon")
     pp.title("chords")
+    pp.legend()
     pp.gca().invert_xaxis()
 
     counts = [nuton(derivative1, derivative2, X_BEGIN, eps)[1]
               for eps in eps_list]
     pp.subplot(1, columns, 3)
-    pp.plot(eps_list, counts)
+    pp.plot(eps_list, counts, label='analytic')
     counts = [nm.nuton(function, X_BEGIN, eps)[1] for eps in eps_list]
-    pp.plot(eps_list, counts)
+    pp.plot(eps_list, counts, label='numeric')
     pp.ylabel("N")
     pp.xlabel("epsilon")
     pp.title("nuton")
+    pp.legend()
     pp.gca().invert_xaxis()
 
 
