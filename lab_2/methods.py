@@ -50,11 +50,11 @@ def nuton(gradient, hessian, x0, eps):
         gradient_k = gradient(x_k)
         count += 1
         if linalg.norm(gradient_k) < eps:
-            return x_k
+            return x_k, count
         inv_hessian = linalg.inv(hessian(x_k))
         count += 1
         x_k = x_k - inv_hessian * gradient_k
 
 
-def regular_simplex():
+def regular_simplex(func, x0, eps):
     pass
