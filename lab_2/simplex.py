@@ -19,12 +19,12 @@ class Simplex():
                     new_node[j] = center[j] - length / np.sqrt(2 * j * (j + 1))
             self.nodes.append(new_node)
 
-        def apply(self, func):
-            self.values = [func(x) for x in self.nodes]
+    def apply(self, func):
+        self.values = [func(x) for x in self.nodes]
 
-        def sort(self):
-            if self.values is None:
-                return
-            pairs = sorted(zip(self.nodes, self.values), key=(lambda x: x[1]))
-            self.nodes = [p[0] for p in pairs]
-            self.values = [p[1] for p in pairs]
+    def sort(self):
+        if self.values is None:
+            return
+        pairs = sorted(zip(self.nodes, self.values), key=(lambda x: x[1]))
+        self.nodes = [p[0] for p in pairs]
+        self.values = [p[1] for p in pairs]
