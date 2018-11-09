@@ -19,6 +19,12 @@ class Simplex():
                     new_node[j] = center[j] - length / np.sqrt(2 * j * (j + 1))
             self.nodes.append(new_node)
 
+    def get_count(self):
+        return len(self.nodes)
+
+    def get_pair(self, index):
+        return (self.nodes[index], self.values[index])
+
     def apply(self, func):
         self.values = [func(x) for x in self.nodes]
 
