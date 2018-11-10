@@ -98,10 +98,21 @@ def _basic_vector(size, index):
     return np.array(vector)
 
 
-# def hooke_jeeves(func, x0, eps):
-#     delta = np.ones(len(x0)) * 2 * eps
-#     gamma = 2
-#     x_i = x0
+def hooke_jeeves(func, x0, eps):
+    delta = np.ones(len(x0)) * 2 * eps
+    gamma = 2
+    x_i = x0
+    count = 0
+    a_k = 2
+    while True:
+        new_x, step_count = _research(func, delta, x_i)
+        count += step_count
+        if new_x != x_i:
+            x_i = x_i + a_k * (new_x - x_i)
+            continue
+        if linalg.norm(delta) < eps:
+            return x_i
+        delta /= gamma
 
 
 def _research(func, delta, x0):
@@ -121,3 +132,4 @@ def _research(func, delta, x0):
                 continue
         x_j = y
         f_j = f_y
+    return x_j, count
