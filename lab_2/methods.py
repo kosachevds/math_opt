@@ -1,3 +1,4 @@
+# TODO: odnedim with one point
 import numpy as np
 from numpy import linalg
 import onedim
@@ -72,3 +73,21 @@ def regular_simplex(func, x0, eps):
                 break
             index -= 1
         return simplex.nodes[0]
+
+
+def alternating_variable(func, x0, eps):
+    x_i = x0
+    size = len(x0)
+    while True:
+        x_old = x_i
+        for j in range(size):
+            e_j = [0] * size
+            e_j[j] = 1
+
+            def func_alpha(alpha):
+                return func([x_i - alpha * e_j])
+
+            alpha_j = onedim.minimize(func_alpha, 0, eps, eps)
+            x_i = x_i + alpha_j * e_j
+        if linalg.norm(x_old - x_i) <= eps:
+            return x_i
