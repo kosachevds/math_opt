@@ -1,10 +1,45 @@
 import numpy as np
 from matplotlib import pyplot as pp
 from mpl_toolkits.mplot3d import Axes3D
+import methods
 
 
 def _main():
     plot_task2_function(0, 200, 1000)
+
+
+def task2(x0, first_fig, a_list, eps_list):
+    x0 = np.array(x0)
+    for i, a in enumerate(a_list):
+        def func_wrap(x):
+            return task2_function(x[0], x[1], a)
+
+        def gradient_wrap(x):
+            return task2_gradient(x, a)
+
+        def hessian_wrap(x):
+            return task2_hessian(x, a)
+
+        pp.figure(first_fig + i)
+
+        def get_counts(method):
+            return [method(func_wrap, gradient_wrap, x0, eps)[1]
+                    for eps in eps_list]
+
+        pp.plot(get_counts(methods.steepest_descent), label="Steepest descent")
+        pp.plot(get_counts(methods.conjugate_gradient), label="Conj. gradient")
+        pp.plot([methods.nuton(gradient_wrap, hessian_wrap, x0, eps)
+                 for eps in eps_list],
+                label="Nuton")
+
+        def get_counts_2(method):
+            return [method(func_wrap, x0, eps) for eps in eps_list]
+
+        pp.plot(get_counts_2(methods.regular_simplex), label="Regular simplex")
+        pp.plot(get_counts_2(methods.alternating_variable),
+                label="Altarnating variables")
+        pp.plot(get_counts_2(methods.hooke_jeeves), label="Hooke-Jeeves")
+        pp.plot(get_counts_2(methods.random_search), label="Random Search")
 
 
 def plot_task2_function(fig_id, x1_limit, a_param):
@@ -25,6 +60,14 @@ def plot_task2_function(fig_id, x1_limit, a_param):
 
 def task2_function(x1, x2, a):
     return x1 ** 2 + a * x2 ** 2
+
+
+def task2_gradient(x, a):
+    return np.array([2 * x[0], 2 * a * x[1]])
+
+
+def task2_hessian(x, a):
+    return np.array([[2, 0], [0, 2 * a]])
 
 
 def task3_function(x1, x2):
