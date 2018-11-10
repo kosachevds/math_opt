@@ -81,8 +81,7 @@ def alternating_variable(func, x0, eps):
     while True:
         x_old = x_i
         for j in range(size):
-            e_j = [0] * size
-            e_j[j] = 1
+            e_j = _basic_vector(size, j)
 
             def func_alpha(alpha):
                 return func([x_i - alpha * e_j])
@@ -91,3 +90,21 @@ def alternating_variable(func, x0, eps):
             x_i = x_i + alpha_j * e_j
         if linalg.norm(x_old - x_i) <= eps:
             return x_i
+
+
+def _basic_vector(size, index):
+    vector = [0] * size
+    vector[index] = 1
+    return vector
+
+
+# def hooke_jeeves(func, x0, eps):
+#     delta = np.ones(len(x0)) * 2 * eps
+#     gamma = 2
+#     x_i = x0
+
+
+# def _research(func, delta, x0):
+#     x_j = x0
+#     for j in range(len(x0)):
+#         # y =
