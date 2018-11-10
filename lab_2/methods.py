@@ -94,7 +94,7 @@ def alternating_variable(func, x0, eps):
 
 def hooke_jeeves(func, x0, eps):
     delta = np.ones(len(x0)) * 2 * eps
-    gamma = 2
+    gamma = 2.0
     x_i = x0
     count = 0
     a_k = 2
@@ -105,8 +105,34 @@ def hooke_jeeves(func, x0, eps):
             x_i = x_i + a_k * (new_x - x_i)
             continue
         if linalg.norm(delta) < eps:
-            return x_i
+            return x_i, count
         delta /= gamma
+
+
+def random_search(func, x0, eps):
+    max_steps = 3 * len(x0)
+    alpha = 10 * eps
+    gamma = 2.0
+    x_i = x0
+    f_i = func(x_i)
+    count = 1
+    ksi_count = 0
+    while True:
+        ksi = np.random.uniform(-1, 1, len(x0))
+        ksi_count += 1
+        y_i = x_i + alpha * (ksi / linalg.norm(ksi))
+        f_y = func(y_i)
+        count += 1
+        if f_y < f_i:
+            f_i = f_y
+            x_i = y_i
+            ksi_count = 0
+            continue
+        if ksi_count < max_steps:
+            continue
+        if alpha < eps:
+            return x_i, count
+        alpha /= gamma
 
 
 def _research(func, delta, x0):
