@@ -5,11 +5,11 @@ import onedim
 from simplex import Simplex
 
 
-def steepest_descent(func, gradient_func, x0, eps):
+def steepest_descent(func, gradient, x0, eps):
     x_k = x0
     count = 0
     while True:
-        grad_k = gradient_func(x_k)
+        grad_k = gradient(x_k)
         count += 1
         if linalg.norm(grad_k) < eps:
             return x_k, count
