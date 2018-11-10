@@ -15,7 +15,7 @@ def steepest_descent(func, gradient, x0, eps):
             return x_k, count
 
         def func_alpha(alpha):
-            return func([x_k - alpha * grad_k])
+            return func(x_k - alpha * grad_k)
 
         alpha_k, step_count = onedim.minimize(func_alpha, eps, 1, eps)
         count += step_count
@@ -33,7 +33,7 @@ def conjugate_gradient(func, gradient, x0, eps):
             return x_k, count
 
         def func_alpha(alpha):
-            return func([x_k + alpha * p_k])
+            return func(x_k + alpha * p_k)
 
         alpha_k, step_count = onedim.minimize(func_alpha, eps, 1, eps)
         count += step_count
@@ -47,7 +47,7 @@ def conjugate_gradient(func, gradient, x0, eps):
         p_k = -grad_k + beta * p_k
 
 
-def nuton(gradient, hessian, x0, eps):
+def nuton(gradient, hessian, x0, eps):  # FIX
     x_k = x0
     count = 0
     while True:
@@ -60,8 +60,8 @@ def nuton(gradient, hessian, x0, eps):
         x_k = x_k - inv_hessian * gradient_k
 
 
-def regular_simplex(func, x0, eps):
-    simplex = Simplex(x0, eps)
+def regular_simplex(func, x0, eps):  # FIX
+    simplex = Simplex(x0, 1)
     simplex.apply(func)
     count = len(x0)
     while True:
@@ -79,7 +79,7 @@ def regular_simplex(func, x0, eps):
         return simplex.nodes[0], count
 
 
-def alternating_variable(func, x0, eps):
+def alternating_variable(func, x0, eps):  # FIX
     x_i = x0
     size = len(x0)
     count = 0
@@ -89,17 +89,17 @@ def alternating_variable(func, x0, eps):
             e_j = _basic_vector(size, j)
 
             def func_alpha(alpha):
-                return func([x_i - alpha * e_j])
+                return func(x_i - alpha * e_j)
 
             alpha_j, step_count = onedim.minimize(func_alpha, 0, eps, eps)
             count += step_count
             x_i = x_i + alpha_j * e_j
         if linalg.norm(x_old - x_i) <= eps:
-            return x_i
+            return x_i, count
 
 
 def hooke_jeeves(func, x0, eps):
-    delta = np.ones(len(x0)) * 2 * eps
+    delta = np.ones(len(x0))
     gamma = 2.0
     x_i = x0
     count = 0
@@ -107,7 +107,7 @@ def hooke_jeeves(func, x0, eps):
     while True:
         new_x, step_count = _research(func, delta, x_i)
         count += step_count
-        if new_x != x_i:
+        if not np.array_equal(new_x, x_i):
             x_i = x_i + a_k * (new_x - x_i)
             continue
         if linalg.norm(delta) < eps:
@@ -117,7 +117,7 @@ def hooke_jeeves(func, x0, eps):
 
 def random_search(func, x0, eps):
     max_steps = 3 * len(x0)
-    alpha = 10 * eps
+    alpha = 1
     gamma = 2.0
     x_i = x0
     f_i = func(x_i)

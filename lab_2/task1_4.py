@@ -5,12 +5,13 @@ import methods
 
 
 def _main():
-    plot_task2_function(0, 200, 1000)
+    # plot_task2_function(0, 200, 1000)
+    task2([10, 10], 0, [1, 250, 1000], [1e-3, 1e-5])
 
 
-def task2(x0, first_fig, a_list, eps_list):
+def task2(x0, first_fig, param_list, eps_list):
     x0 = np.array(x0)
-    for i, param in enumerate(a_list):
+    for i, param in enumerate(param_list):
         def func_wrap(x):
             return task2_function(x[0], x[1], param)
 
@@ -37,10 +38,10 @@ def plot_perfomance(func, gradient, hessian, x0, eps_list, fig_id):
     pp.plot(get_counts_1(methods.conjugate_gradient), label="Conj. gradient")
 
     def get_counts_2(method):
-        return [method(func, x0, eps) for eps in eps_list]
-    pp.plot(get_counts_2(methods.regular_simplex), label="Regular simplex")
-    pp.plot(get_counts_2(methods.alternating_variable),
-            label="Altarnating variables")
+        return [method(func, x0, eps)[1] for eps in eps_list]
+    # pp.plot(get_counts_2(methods.regular_simplex), label="Regular simplex")
+    # pp.plot(get_counts_2(methods.alternating_variable),
+    #         label="Altarnating variables")
     pp.plot(get_counts_2(methods.hooke_jeeves), label="Hooke-Jeeves")
     pp.plot(get_counts_2(methods.random_search), label="Random Search")
 
@@ -78,7 +79,7 @@ def task2_gradient(x, a):
 
 
 def task2_hessian(x, a):
-    return np.array([[2, 0], [0, 2 * a]])
+    return np.array([[2.0, 0.0], [0.0, 2.0 * a]])
 
 
 def task3_function(x1, x2):
