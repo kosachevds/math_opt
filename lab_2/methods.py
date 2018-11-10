@@ -92,12 +92,6 @@ def alternating_variable(func, x0, eps):
             return x_i
 
 
-def _basic_vector(size, index):
-    vector = [0] * size
-    vector[index] = 1
-    return np.array(vector)
-
-
 def hooke_jeeves(func, x0, eps):
     delta = np.ones(len(x0)) * 2 * eps
     gamma = 2
@@ -133,3 +127,9 @@ def _research(func, delta, x0):
         x_j = y
         f_j = f_y
     return x_j, count
+
+
+def _basic_vector(size, index):
+    vector = [0] * size
+    vector[index] = 1
+    return np.array(vector)
