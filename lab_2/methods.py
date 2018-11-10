@@ -106,22 +106,25 @@ def alternating_variable(func, x0, eps):
 
 
 def hooke_jeeves(func, x0, eps):  # TODO: fix big counts
-    delta = _np.full(len(x0), 1024 * eps)
+    delta = _np.ones(len(x0))
     gamma = _np.sqrt(5)
     x_i = x0
     count = 0
     a_k = 2
-    previous = None
     while True:
-        new_x, step_count = _research(func, delta, x_i)
+        new_x, f_i, step_count = _research(func, delta, x_i)
         count += step_count
         if not _np.array_equal(new_x, x_i):
-            if previous is not None and _np.array_equal(previous, new_x):
-                delta /= gamma
-                continue
-            previous = new_x
-            x_i = x_i + a_k * (new_x - x_i)
-            continue
+            step_vector = new_x - x_i
+            while True:
+                new_x = x_i + a_k * step_vector
+                new_f = func(new_x)
+                count += 1
+                if new_f >= f_i:
+                    break
+                f_i = new_f
+                step_vector = new_x - x_i
+                x_i = new_x
         if _la.norm(delta) < eps:
             return x_i, count
         delta /= gamma
@@ -171,7 +174,7 @@ def _research(func, delta, x0):
                 continue
         x_j = y
         f_j = f_y
-    return x_j, count
+    return x_j, f_j, count
 
 
 def _basic_vector(size, index):
