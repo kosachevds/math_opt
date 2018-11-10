@@ -17,7 +17,8 @@ def steepest_descent(func, gradient_func, x0, eps):
         def func_alpha(alpha):
             return func([x_k - alpha * grad_k])
 
-        alpha_k = onedim.minimize(func_alpha, eps, 1, eps)
+        alpha_k, step_count = onedim.minimize(func_alpha, eps, 1, eps)
+        count += step_count
         x_k = x_k - alpha_k * grad_k
 
 
@@ -34,7 +35,8 @@ def conjugate_gradient(func, gradient, x0, eps):
         def func_alpha(alpha):
             return func([x_k + alpha * p_k])
 
-        alpha_k = onedim.minimize(func_alpha, eps, 1, eps)
+        alpha_k, step_count = onedim.minimize(func_alpha, eps, 1, eps)
+        count += step_count
         x_k = x_k + alpha_k * p_k
         grad_next = gradient(x_k)
         beta = (linalg.norm(grad_next) ** 2) / (linalg.norm(grad_k) ** 2)
@@ -61,6 +63,7 @@ def nuton(gradient, hessian, x0, eps):
 def regular_simplex(func, x0, eps):
     simplex = Simplex(x0, eps)
     simplex.apply(func)
+    count = len(x0)
     while True:
         simplex.sort()
         index = simplex.get_count() - 1
@@ -68,16 +71,18 @@ def regular_simplex(func, x0, eps):
             x_max, f_max = simplex.get_pair(index)
             new_x = simplex.get_new_x(x_max)
             new_f = func(new_x)
+            count += 1
             if new_f < f_max:
                 simplex.replace_pair(index, new_x, new_f)
                 break
             index -= 1
-        return simplex.nodes[0]
+        return simplex.nodes[0], count
 
 
 def alternating_variable(func, x0, eps):
     x_i = x0
     size = len(x0)
+    count = 0
     while True:
         x_old = x_i
         for j in range(size):
@@ -86,7 +91,8 @@ def alternating_variable(func, x0, eps):
             def func_alpha(alpha):
                 return func([x_i - alpha * e_j])
 
-            alpha_j = onedim.minimize(func_alpha, 0, eps, eps)
+            alpha_j, step_count = onedim.minimize(func_alpha, 0, eps, eps)
+            count += step_count
             x_i = x_i + alpha_j * e_j
         if linalg.norm(x_old - x_i) <= eps:
             return x_i
