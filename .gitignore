@@ -173,5 +173,6 @@ atlassian-ide-plugin.xml
 .vscode
 
 *.pdf
+*.png
 !lab*2018.pdf
 *.djvu
