@@ -10,36 +10,47 @@ def _main():
 
 def task2(x0, first_fig, a_list, eps_list):
     x0 = np.array(x0)
-    for i, a in enumerate(a_list):
+    for i, param in enumerate(a_list):
         def func_wrap(x):
-            return task2_function(x[0], x[1], a)
+            return task2_function(x[0], x[1], param)
 
         def gradient_wrap(x):
-            return task2_gradient(x, a)
+            return task2_gradient(x, param)
 
         def hessian_wrap(x):
-            return task2_hessian(x, a)
+            return task2_hessian(x, param)
 
-        pp.figure(first_fig + i)
+        plot_perfomance(func_wrap, gradient_wrap, hessian_wrap, x0, eps_list,
+                        first_fig + i)
 
-        def get_counts(method):
-            return [method(func_wrap, gradient_wrap, x0, eps)[1]
-                    for eps in eps_list]
+        pp.title("A = {0}".format(param))
 
-        pp.plot(get_counts(methods.steepest_descent), label="Steepest descent")
-        pp.plot(get_counts(methods.conjugate_gradient), label="Conj. gradient")
-        pp.plot([methods.nuton(gradient_wrap, hessian_wrap, x0, eps)
-                 for eps in eps_list],
-                label="Nuton")
 
-        def get_counts_2(method):
-            return [method(func_wrap, x0, eps) for eps in eps_list]
+def plot_perfomance(func, gradient, hessian, x0, eps_list, fig_id):
+    pp.figure(fig_id)
 
-        pp.plot(get_counts_2(methods.regular_simplex), label="Regular simplex")
-        pp.plot(get_counts_2(methods.alternating_variable),
-                label="Altarnating variables")
-        pp.plot(get_counts_2(methods.hooke_jeeves), label="Hooke-Jeeves")
-        pp.plot(get_counts_2(methods.random_search), label="Random Search")
+    def get_counts_1(method):
+        """With gradient"""
+        return [method(func, gradient, x0, eps)[1]
+                for eps in eps_list]
+    pp.plot(get_counts_1(methods.steepest_descent), label="Steepest descent")
+    pp.plot(get_counts_1(methods.conjugate_gradient), label="Conj. gradient")
+
+    def get_counts_2(method):
+        return [method(func, x0, eps) for eps in eps_list]
+    pp.plot(get_counts_2(methods.regular_simplex), label="Regular simplex")
+    pp.plot(get_counts_2(methods.alternating_variable),
+            label="Altarnating variables")
+    pp.plot(get_counts_2(methods.hooke_jeeves), label="Hooke-Jeeves")
+    pp.plot(get_counts_2(methods.random_search), label="Random Search")
+
+    pp.plot(eps_list,
+            [methods.nuton(gradient, hessian, x0, eps) for eps in eps_list],
+            label="Nuton")
+
+    pp.gca().invert_xaxis()
+    pp.xlabel("epsilon")
+    pp.ylabel("counts")
 
 
 def plot_task2_function(fig_id, x1_limit, a_param):
