@@ -57,7 +57,7 @@ def nuton(gradient, hessian, x0, eps):  # FIX
             return x_k, count
         inv_hessian = linalg.inv(hessian(x_k))
         count += 1
-        x_k = x_k - inv_hessian * gradient_k
+        x_k = x_k - np.matmul(inv_hessian, gradient_k)
 
 
 def regular_simplex(func, x0, eps):  # FIX
