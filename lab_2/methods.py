@@ -6,6 +6,7 @@ from simplex import Simplex
 
 
 def steepest_descent(func, gradient, x0, eps):
+    # TODO with quadratic function matrices
     x_k = x0
     count = 0
     min_alpha = np.finfo(np.float32).eps
@@ -25,24 +26,6 @@ def steepest_descent(func, gradient, x0, eps):
         x_k = x_k - alpha_k * grad_k
 
 
-# def steepest_descent_quadratic(func, gradient, x0, eps, matrix_a, vector_b):
-#     x_k = x0
-#     count = 0
-#     min_alpha = np.finfo(np.float32).eps
-#     while True:
-#         grad_k = gradient(x_k)
-#         count += 1
-#         if linalg.norm(grad_k) < eps:
-#             return x_k, count
-
-#         def func_alpha(alpha):
-#             return func(x_k - alpha * grad_k)
-
-#         alpha_k =
-#         count += step_count
-#         x_k = x_k - alpha_k * grad_k
-
-
 def conjugate_gradient(func, gradient, x0, eps):
     x_k = x0
     grad_k = gradient(x0)
@@ -60,7 +43,7 @@ def conjugate_gradient(func, gradient, x0, eps):
         count += step_count
         x_k = x_k + alpha_k * p_k
         grad_next = gradient(x_k)
-        beta = (linalg.norm(grad_next) ** 2) / (linalg.norm(grad_k) ** 2)
+        beta = (linalg.norm(grad_next) / linalg.norm(grad_k)) ** 2
         if k > 0 and k % len(x0) == 0:
             beta = 0
         k += 1
@@ -136,7 +119,7 @@ def hooke_jeeves(func, x0, eps):  # error with [9.9, 9.9]
         delta /= gamma
 
 
-def random_search(func, x0, eps):  # FIX: bad result with a == 1000
+def random_search(func, x0, eps):  # FIX: bad result with a == 1000, 250; with a == 1 is near good
     max_steps = 3 * len(x0)
     alpha = 1
     gamma = 2.0

@@ -6,7 +6,7 @@ import methods
 
 def _main():
     # plot_task2_function(0, 200, 1000)
-    task2([10, 10], 0, [1000], [1e-3, 1e-5])
+    task2([10, 10], 0, [1, 250], [1e-3, 1e-5])
 
 
 def task2(x0, first_fig, param_list, eps_list):
@@ -22,8 +22,8 @@ def task2(x0, first_fig, param_list, eps_list):
             return task2_hessian(x, param)
 
         fig_id = first_fig + i
-        if param < 1000:
-            gradient_methods(func_wrap, gradient_wrap, x0, eps_list, fig_id)
+        # if param < 1000:
+        # gradient_methods(func_wrap, gradient_wrap, x0, eps_list, fig_id)
         non_gradient_methods(func_wrap, x0, eps_list, fig_id)
         nuton_counts = [methods.nuton(gradient_wrap, hessian_wrap, x0, eps)[1]
                         for eps in eps_list]
@@ -33,8 +33,8 @@ def task2(x0, first_fig, param_list, eps_list):
         pp.legend()
         pp.xlabel("epsilon")
         pp.ylabel("counts")
-        pp.show()
         pp.title("A = {0}".format(param))
+    pp.show()
 
 
 def gradient_methods(func, gradient, x0, eps_list, fig_id):

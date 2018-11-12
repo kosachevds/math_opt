@@ -1,12 +1,7 @@
 import numpy
-from matplotlib import pyplot as pp
 
 
 def minimize(func, begin, end, eps):
-    # if __debug__:
-    #     points = numpy.linspace(begin - end, end)
-    #     pp.plot(points, [func(x) for x in points])
-    #     pp.show()
     count = 2
     if func(begin) < func(begin + eps):
         return begin, count
