@@ -21,41 +21,44 @@ def task2(x0, first_fig, param_list, eps_list):
         def hessian_wrap(x):
             return task2_hessian(x, param)
 
-        plot_perfomance(func_wrap, gradient_wrap, hessian_wrap, x0, eps_list,
-                        first_fig + i)
+        fig_id = first_fig + i
+        if param < 1000:
+            gradient_methods(func_wrap, gradient_wrap, x0, eps_list, fig_id)
+        non_gradient_methods(func_wrap, x0, eps_list, fig_id)
+        nuton_counts = [methods.nuton(gradient_wrap, hessian_wrap, x0, eps)[1]
+                        for eps in eps_list]
+        pp.plot(eps_list, nuton_counts, label="Nuton")
 
+        pp.gca().invert_xaxis()
+        pp.legend()
+        pp.xlabel("epsilon")
+        pp.ylabel("counts")
+        pp.show()
         pp.title("A = {0}".format(param))
 
- # todo another parameter for gradient methods or make it in two functions
-def plot_perfomance(func, gradient, hessian, x0, eps_list, fig_id):
+
+def gradient_methods(func, gradient, x0, eps_list, fig_id):
     pp.figure(fig_id)
 
-    # TODO with plotting function instead of get_counts
-    def get_counts_1(method):
-        """With gradient"""
-        return [method(func, gradient, x0, eps)[1]
-                for eps in eps_list]
+    def plot_method(method, label):
+        counts = [method(func, gradient, x0, eps)[1] for eps in eps_list]
+        pp.plot(eps_list, counts, label=label)
 
-    # pp.plot(eps_list, get_counts_1(methods.steepest_descent), label="Steepest descent")
-    # pp.plot(eps_list, get_counts_1(methods.conjugate_gradient), label="Conj. gradient")
+    plot_method(methods.steepest_descent, "Steepest descent")
+    plot_method(methods.conjugate_gradient, "Conj. gradient")
 
-    def get_counts_2(method):
-        return [method(func, x0, eps)[1] for eps in eps_list]
-    # pp.plot(eps_list, get_counts_2(methods.regular_simplex), label="Regular simplex")
-    # pp.plot(eps_list, get_counts_2(methods.alternating_variable),
-    #         label="Altarnating variables")
-    pp.plot(eps_list, get_counts_2(methods.hooke_jeeves), label="Hooke-Jeeves")
-    pp.plot(eps_list, get_counts_2(methods.random_search), label="Random Search")
 
-    pp.plot(eps_list,
-            [methods.nuton(gradient, hessian, x0, eps)[1] for eps in eps_list],
-            label="Nuton")
+def non_gradient_methods(func, x0, eps_list, fig_id):
+    pp.figure(fig_id)
 
-    pp.gca().invert_xaxis()
-    pp.legend()
-    pp.xlabel("epsilon")
-    pp.ylabel("counts")
-    pp.show()
+    def plot_method(method, label):
+        counts = [method(func, x0, eps)[1] for eps in eps_list]
+        pp.plot(eps_list, counts, label=label)
+
+    # plot_method(methods.regular_simplex, "Regular simplex")
+    # plot_method(methods.alternating_variable, "Alternating variables")
+    plot_method(methods.hooke_jeeves, "Hooke-Jeeves")
+    plot_method(methods.random_search, "Random Search")
 
 
 def plot_task2_function(fig_id, x1_limit, a_param):
