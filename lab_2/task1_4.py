@@ -6,7 +6,7 @@ import methods
 
 def _main():
     # plot_task2_function(0, 200, 1000)
-    task2([10, 10], 0, [1, 250, 1000], [1e-3, 1e-5])
+    task2([10, 10], 0, [1000], [1e-3, 1e-5])
 
 
 def task2(x0, first_fig, param_list, eps_list):
@@ -26,32 +26,36 @@ def task2(x0, first_fig, param_list, eps_list):
 
         pp.title("A = {0}".format(param))
 
-
+ # todo another parameter for gradient methods or make it in two functions
 def plot_perfomance(func, gradient, hessian, x0, eps_list, fig_id):
     pp.figure(fig_id)
 
+    # TODO with plotting function instead of get_counts
     def get_counts_1(method):
         """With gradient"""
         return [method(func, gradient, x0, eps)[1]
                 for eps in eps_list]
-    pp.plot(get_counts_1(methods.steepest_descent), label="Steepest descent")
-    pp.plot(get_counts_1(methods.conjugate_gradient), label="Conj. gradient")
+
+    # pp.plot(eps_list, get_counts_1(methods.steepest_descent), label="Steepest descent")
+    # pp.plot(eps_list, get_counts_1(methods.conjugate_gradient), label="Conj. gradient")
 
     def get_counts_2(method):
         return [method(func, x0, eps)[1] for eps in eps_list]
-    # pp.plot(get_counts_2(methods.regular_simplex), label="Regular simplex")
-    # pp.plot(get_counts_2(methods.alternating_variable),
+    # pp.plot(eps_list, get_counts_2(methods.regular_simplex), label="Regular simplex")
+    # pp.plot(eps_list, get_counts_2(methods.alternating_variable),
     #         label="Altarnating variables")
-    pp.plot(get_counts_2(methods.hooke_jeeves), label="Hooke-Jeeves")
-    pp.plot(get_counts_2(methods.random_search), label="Random Search")
+    pp.plot(eps_list, get_counts_2(methods.hooke_jeeves), label="Hooke-Jeeves")
+    pp.plot(eps_list, get_counts_2(methods.random_search), label="Random Search")
 
     pp.plot(eps_list,
-            [methods.nuton(gradient, hessian, x0, eps) for eps in eps_list],
+            [methods.nuton(gradient, hessian, x0, eps)[1] for eps in eps_list],
             label="Nuton")
 
     pp.gca().invert_xaxis()
+    pp.legend()
     pp.xlabel("epsilon")
     pp.ylabel("counts")
+    pp.show()
 
 
 def plot_task2_function(fig_id, x1_limit, a_param):

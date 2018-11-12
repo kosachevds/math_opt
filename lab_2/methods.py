@@ -8,6 +8,7 @@ from simplex import Simplex
 def steepest_descent(func, gradient, x0, eps):
     x_k = x0
     count = 0
+    min_alpha = np.finfo(np.float32).eps
     while True:
         grad_k = gradient(x_k)
         count += 1
@@ -17,9 +18,29 @@ def steepest_descent(func, gradient, x0, eps):
         def func_alpha(alpha):
             return func(x_k - alpha * grad_k)
 
-        alpha_k, step_count = onedim.minimize(func_alpha, eps, 1, eps)
+        alpha_k, step_count = onedim.minimize(func_alpha, min_alpha, 1, eps)
+        if alpha_k == min_alpha:
+            alpha_k = 1
         count += step_count
         x_k = x_k - alpha_k * grad_k
+
+
+# def steepest_descent_quadratic(func, gradient, x0, eps, matrix_a, vector_b):
+#     x_k = x0
+#     count = 0
+#     min_alpha = np.finfo(np.float32).eps
+#     while True:
+#         grad_k = gradient(x_k)
+#         count += 1
+#         if linalg.norm(grad_k) < eps:
+#             return x_k, count
+
+#         def func_alpha(alpha):
+#             return func(x_k - alpha * grad_k)
+
+#         alpha_k =
+#         count += step_count
+#         x_k = x_k - alpha_k * grad_k
 
 
 def conjugate_gradient(func, gradient, x0, eps):
@@ -47,7 +68,7 @@ def conjugate_gradient(func, gradient, x0, eps):
         p_k = -grad_k + beta * p_k
 
 
-def nuton(gradient, hessian, x0, eps):  # FIX
+def nuton(gradient, hessian, x0, eps):
     x_k = x0
     count = 0
     while True:
@@ -98,7 +119,7 @@ def alternating_variable(func, x0, eps):  # FIX
             return x_i, count
 
 
-def hooke_jeeves(func, x0, eps):
+def hooke_jeeves(func, x0, eps):  # error with [9.9, 9.9]
     delta = np.ones(len(x0))
     gamma = 2.0
     x_i = x0
@@ -115,7 +136,7 @@ def hooke_jeeves(func, x0, eps):
         delta /= gamma
 
 
-def random_search(func, x0, eps):
+def random_search(func, x0, eps):  # FIX: bad result with a == 1000
     max_steps = 3 * len(x0)
     alpha = 1
     gamma = 2.0
