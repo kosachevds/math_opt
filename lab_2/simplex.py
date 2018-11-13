@@ -19,7 +19,7 @@ class Simplex():
                     new_node[index] += length * np.sqrt(j / (2 * (j + 1)))
                 else:
                     new_node[index] -= length / np.sqrt(2 * j * (j + 1))
-            self.nodes.append(new_node)
+            self.nodes.append(np.array(new_node))
 
     def get_count(self):
         return len(self.nodes)
@@ -42,3 +42,8 @@ class Simplex():
     def replace_pair(self, index, new_x, new_f):
         self.nodes[index] = new_x
         self.values[index] = new_f
+
+    def reduction(self, delta):
+        x_1 = self.nodes[0]
+        self.length *= delta
+        self.nodes[1:] = [x_1 + delta * (x_i - x_1) for x_i in self.nodes[1:]]
