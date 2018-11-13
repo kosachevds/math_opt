@@ -72,7 +72,7 @@ def regular_simplex(func, x0, eps):  # FIX
         simplex.sort()
         index = simplex.get_count() - 1
         while index >= 0:
-            x_max, f_max = simplex.get_pair(index)
+            f_max = simplex.values[index]
             new_x = simplex.get_opposite(index)
             new_f = func(new_x)
             count += 1
@@ -80,7 +80,8 @@ def regular_simplex(func, x0, eps):  # FIX
                 simplex.replace_pair(index, new_x, new_f)
                 break
             index -= 1
-        return simplex.nodes[0], count
+        if index < 0:
+            return simplex.nodes[0], count
 
 
 def alternating_variable(func, x0, eps):  # FIX
