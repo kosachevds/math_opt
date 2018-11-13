@@ -1,4 +1,4 @@
-import numpy as np
+import numpy as _np
 from matplotlib import pyplot as pp
 from mpl_toolkits.mplot3d import Axes3D
 import methods
@@ -10,7 +10,7 @@ def _main():
 
 
 def task2(x0, first_fig, param_list, eps_list):
-    x0 = np.array(x0)
+    x0 = _np.array(x0)
     for i, param in enumerate(param_list):
         def func_wrap(x):
             return task2_function(x[0], x[1], param)
@@ -55,7 +55,7 @@ def non_gradient_methods(func, x0, eps_list, fig_id):
         counts = [method(func, x0, eps)[1] for eps in eps_list]
         pp.plot(eps_list, counts, label=label)
 
-    plot_method(methods.simplex, "Simplex method")
+    plot_method(methods.regular_simplex, "Simplex method")
     # plot_method(methods.alternating_variable, "Alternating variables")
     plot_method(methods.hooke_jeeves, "Hooke-Jeeves")
     plot_method(methods.random_search, "Random Search")
@@ -64,9 +64,9 @@ def non_gradient_methods(func, x0, eps_list, fig_id):
 def plot_task2_function(fig_id, x1_limit, a_param):
     pp.figure(fig_id)
     axes = pp.axes(projection="3d")
-    x_1 = np.linspace(-x1_limit, x1_limit)
-    x_2 = np.linspace(-3, 3)
-    x_1, x_2 = np.meshgrid(x_1, x_2)
+    x_1 = _np.linspace(-x1_limit, x1_limit)
+    x_2 = _np.linspace(-3, 3)
+    x_1, x_2 = _np.meshgrid(x_1, x_2)
     z = task2_function(x_1, x_2, a_param)
     # axes.contour3D(x_1, x_2, z, 64)
     axes.plot_wireframe(x_1, x_2, z)
@@ -82,11 +82,11 @@ def task2_function(x1, x2, a):
 
 
 def task2_gradient(x, a):
-    return np.array([2 * x[0], 2 * a * x[1]])
+    return _np.array([2 * x[0], 2 * a * x[1]])
 
 
 def task2_hessian(x, a):
-    return np.array([[2.0, 0.0], [0.0, 2.0 * a]])
+    return _np.array([[2.0, 0.0], [0.0, 2.0 * a]])
 
 
 def task3_function(x1, x2):

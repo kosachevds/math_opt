@@ -1,4 +1,4 @@
-import numpy as np
+import numpy as _np
 
 
 class Simplex():
@@ -16,10 +16,10 @@ class Simplex():
                 if j < i - 1:
                     continue
                 if j == i - 1:
-                    new_node[index] += length * np.sqrt(j / (2 * (j + 1)))
+                    new_node[index] += length * _np.sqrt(j / (2 * (j + 1)))
                 else:
-                    new_node[index] -= length / np.sqrt(2 * j * (j + 1))
-            self.nodes.append(np.array(new_node))
+                    new_node[index] -= length / _np.sqrt(2 * j * (j + 1))
+            self.nodes.append(_np.array(new_node))
 
     def get_count(self):
         return len(self.nodes)
@@ -36,7 +36,7 @@ class Simplex():
 
     def get_opposite(self, index):
         dim = len(self.nodes[0])
-        x_c = (np.sum(self.nodes, axis=0) - self.nodes[index]) / dim
+        x_c = (_np.sum(self.nodes, axis=0) - self.nodes[index]) / dim
         return 2 * x_c - self.nodes[index]
 
     def replace_pair(self, index, new_x, new_f):

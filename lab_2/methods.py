@@ -1,7 +1,7 @@
 # TODO: odnedim with one point
-import numpy as np
-from numpy import linalg
-import onedim
+import numpy as _np
+from numpy import linalg as _la
+import onedim as _onedim
 from simplex import Simplex
 
 
@@ -9,17 +9,17 @@ def steepest_descent(func, gradient, x0, eps):
     # TODO with quadratic function matrices
     x_k = x0
     count = 0
-    min_alpha = np.finfo(np.float32).eps
+    min_alpha = _np.finfo(_np.float32).eps
     while True:
         grad_k = gradient(x_k)
         count += 1
-        if linalg.norm(grad_k) < eps:
+        if _la.norm(grad_k) < eps:
             return x_k, count
 
         def func_alpha(alpha):
             return func(x_k - alpha * grad_k)
 
-        alpha_k, step_count = onedim.minimize(func_alpha, min_alpha, 1, eps)
+        alpha_k, step_count = _onedim.minimize(func_alpha, min_alpha, 1, eps)
         if alpha_k == min_alpha:
             alpha_k = 1
         count += step_count
@@ -33,17 +33,17 @@ def conjugate_gradient(func, gradient, x0, eps):
     count = 1
     k = 0
     while True:
-        if linalg.norm(grad_k) < eps:
+        if _la.norm(grad_k) < eps:
             return x_k, count
 
         def func_alpha(alpha):
             return func(x_k + alpha * p_k)
 
-        alpha_k, step_count = onedim.minimize(func_alpha, eps, 1, eps)
+        alpha_k, step_count = _onedim.minimize(func_alpha, eps, 1, eps)
         count += step_count
         x_k = x_k + alpha_k * p_k
         grad_next = gradient(x_k)
-        beta = (linalg.norm(grad_next) / linalg.norm(grad_k)) ** 2
+        beta = (_la.norm(grad_next) / _la.norm(grad_k)) ** 2
         if k > 0 and k % len(x0) == 0:
             beta = 0
         k += 1
@@ -57,15 +57,15 @@ def nuton(gradient, hessian, x0, eps):
     while True:
         gradient_k = gradient(x_k)
         count += 1
-        if linalg.norm(gradient_k) < eps:
+        if _la.norm(gradient_k) < eps:
             return x_k, count
-        inv_hessian = linalg.inv(hessian(x_k))
+        inv_hessian = _la.inv(hessian(x_k))
         count += 1
-        x_k = x_k - np.matmul(inv_hessian, gradient_k)
+        x_k = x_k - _np.matmul(inv_hessian, gradient_k)
 
 
-def simplex(func, x0, eps):
-    simplex = Simplex(x0, np.e)
+def regular_simplex(func, x0, eps):
+    simplex = Simplex(x0, _np.e)
     simplex.apply(func)
     count = len(x0)
     while True:
@@ -98,15 +98,15 @@ def alternating_variable(func, x0, eps):  # FIX
             def func_alpha(alpha):
                 return func(x_i - alpha * e_j)
 
-            alpha_j, step_count = onedim.minimize(func_alpha, 0, eps, eps)
+            alpha_j, step_count = _onedim.minimize(func_alpha, 0, eps, eps)
             count += step_count
             x_i = x_i + alpha_j * e_j
-        if linalg.norm(x_old - x_i) <= eps:
+        if _la.norm(x_old - x_i) <= eps:
             return x_i, count
 
 
 def hooke_jeeves(func, x0, eps):  # error with [9.9, 9.9]
-    delta = np.ones(len(x0))
+    delta = _np.ones(len(x0))
     gamma = 2.0
     x_i = x0
     count = 0
@@ -114,10 +114,10 @@ def hooke_jeeves(func, x0, eps):  # error with [9.9, 9.9]
     while True:
         new_x, step_count = _research(func, delta, x_i)
         count += step_count
-        if not np.array_equal(new_x, x_i):
+        if not _np.array_equal(new_x, x_i):
             x_i = x_i + a_k * (new_x - x_i)
             continue
-        if linalg.norm(delta) < eps:
+        if _la.norm(delta) < eps:
             return x_i, count
         delta /= gamma
 
@@ -131,9 +131,9 @@ def random_search(func, x0, eps):  # FIX: bad result with a == 1000, 250; with a
     count = 1
     ksi_count = 0
     while True:
-        ksi = np.random.uniform(-1, 1, len(x0))
+        ksi = _np.random.uniform(-1, 1, len(x0))
         ksi_count += 1
-        y_i = x_i + alpha * (ksi / linalg.norm(ksi))
+        y_i = x_i + alpha * (ksi / _la.norm(ksi))
         f_y = func(y_i)
         count += 1
         if f_y < f_i:
@@ -171,4 +171,4 @@ def _research(func, delta, x0):
 def _basic_vector(size, index):
     vector = [0] * size
     vector[index] = 1
-    return np.array(vector)
+    return _np.array(vector)
