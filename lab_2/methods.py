@@ -65,7 +65,7 @@ def nuton(gradient, hessian, x0, eps):
 
 
 def regular_simplex(func, x0, eps):  # FIX
-    simplex = Simplex(x0, 1)
+    simplex = Simplex(x0, np.e)
     simplex.apply(func)
     count = len(x0)
     while True:
@@ -73,7 +73,7 @@ def regular_simplex(func, x0, eps):  # FIX
         index = simplex.get_count() - 1
         while index >= 0:
             x_max, f_max = simplex.get_pair(index)
-            new_x = simplex.get_new_x(x_max)
+            new_x = simplex.get_opposite(index)
             new_f = func(new_x)
             count += 1
             if new_f < f_max:

@@ -6,7 +6,7 @@ import methods
 
 def _main():
     # plot_task2_function(0, 200, 1000)
-    task2([10, 10], 0, [1, 250], [1e-3, 1e-5])
+    task2([10, 10], 0, [1], [1e-3, 1e-5])
 
 
 def task2(x0, first_fig, param_list, eps_list):
@@ -55,7 +55,7 @@ def non_gradient_methods(func, x0, eps_list, fig_id):
         counts = [method(func, x0, eps)[1] for eps in eps_list]
         pp.plot(eps_list, counts, label=label)
 
-    # plot_method(methods.regular_simplex, "Regular simplex")
+    plot_method(methods.regular_simplex, "Regular simplex")
     # plot_method(methods.alternating_variable, "Alternating variables")
     plot_method(methods.hooke_jeeves, "Hooke-Jeeves")
     plot_method(methods.random_search, "Random Search")
