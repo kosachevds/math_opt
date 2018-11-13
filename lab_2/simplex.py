@@ -24,9 +24,6 @@ class Simplex():
     def get_count(self):
         return len(self.nodes)
 
-    def get_pair(self, index):
-        return (self.nodes[index], self.values[index])
-
     def apply(self, func):
         self.values = [func(x) for x in self.nodes]
 
