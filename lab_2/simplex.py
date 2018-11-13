@@ -37,8 +37,9 @@ class Simplex():
         self.nodes = [p[0] for p in pairs]
         self.values = [p[1] for p in pairs]
 
-    def get_new_x(self, x_opposite):
-        return np.sum(self.nodes) * 2 / len(self.nodes) - x_opposite
+    def get_opposite(self, index):
+        x_c = (np.sum(self.nodes) - self.nodes[index]) / (len(self.nodes) - 1)
+        return x_c - self.nodes[index]
 
     def replace_pair(self, index, new_x, new_f):
         self.nodes[index] = new_x
