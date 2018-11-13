@@ -86,7 +86,7 @@ def regular_simplex(func, x0, eps):
             count += simplex.get_count()
 
 
-def alternating_variable(func, x0, eps):  # FIX
+def alternating_variable(func, x0, eps):
     x_i = x0
     size = len(x0)
     count = 0
@@ -96,9 +96,9 @@ def alternating_variable(func, x0, eps):  # FIX
             e_j = _basic_vector(size, j)
 
             def func_alpha(alpha):
-                return func(x_i - alpha * e_j)
+                return func(x_i + alpha * e_j)
 
-            alpha_j, step_count = _onedim.minimize(func_alpha, 0, eps, eps)
+            alpha_j, step_count = _onedim.numeric_nuton(func_alpha, 0, eps)
             count += step_count
             x_i = x_i + alpha_j * e_j
         if _la.norm(x_old - x_i) <= eps:

@@ -56,7 +56,7 @@ def non_gradient_methods(func, x0, eps_list, fig_id):
         pp.plot(eps_list, counts, label=label)
 
     plot_method(methods.regular_simplex, "Simplex method")
-    # plot_method(methods.alternating_variable, "Alternating variables")
+    plot_method(methods.alternating_variable, "Alternating variables")
     plot_method(methods.hooke_jeeves, "Hooke-Jeeves")
     plot_method(methods.random_search, "Random Search")
 
