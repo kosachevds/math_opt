@@ -7,16 +7,18 @@ class Simplex():
         self.length = length
         self.nodes = []
         count = len(center) + 1
-        for i in range(count):
+        for i in range(1, count + 1):
+            # TODO: with another method
             new_node = [0] * len(center)
-            for j, _ in enumerate(new_node):
+            for j in range(1, count):
+                index = j - 1
+                new_node[index] = center[index]
                 if j < i - 1:
-                    new_node[j] = center[j]
-                elif j == i - 1:
-                    new_node[j] = (
-                        center[j] + length * np.sqrt(j / (2 * (j + 1))))
+                    continue
+                if j == i - 1:
+                    new_node[index] += length * np.sqrt(j / (2 * (j + 1)))
                 else:
-                    new_node[j] = center[j] - length / np.sqrt(2 * j * (j + 1))
+                    new_node[index] -= length / np.sqrt(2 * j * (j + 1))
             self.nodes.append(new_node)
 
     def get_count(self):
