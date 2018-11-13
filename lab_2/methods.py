@@ -64,24 +64,26 @@ def nuton(gradient, hessian, x0, eps):
         x_k = x_k - np.matmul(inv_hessian, gradient_k)
 
 
-def regular_simplex(func, x0, eps):  # FIX
+def simplex(func, x0, eps):
     simplex = Simplex(x0, np.e)
     simplex.apply(func)
     count = len(x0)
     while True:
         simplex.sort()
-        index = simplex.get_count() - 1
-        while index >= 0:
-            f_max = simplex.values[index]
-            new_x = simplex.get_opposite(index)
-            new_f = func(new_x)
-            count += 1
-            if new_f < f_max:
-                simplex.replace_pair(index, new_x, new_f)
-                break
-            index -= 1
-        if index < 0:
+        if simplex.length < eps:
             return simplex.nodes[0], count
+        index = simplex.get_count() - 1
+        f_max = simplex.values[index]
+        new_x = simplex.get_opposite(index)
+        new_f = func(new_x)
+        count += 1
+        if new_f < f_max:
+            simplex.replace_pair(index, new_x, new_f)
+            continue
+        else:
+            simplex.reduction(0.5)
+            simplex.apply(func)
+            count += simplex.get_count()
 
 
 def alternating_variable(func, x0, eps):  # FIX
