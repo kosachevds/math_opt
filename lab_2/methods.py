@@ -105,16 +105,21 @@ def alternating_variable(func, x0, eps):
             return x_i, count
 
 
-def hooke_jeeves(func, x0, eps):  # error with [9.9, 9.9]
-    delta = _np.ones(len(x0))
-    gamma = 2.0
+def hooke_jeeves(func, x0, eps):  # TODO: fix big counts
+    delta = _np.full(len(x0), 1024 * eps)
+    gamma = _np.sqrt(5)
     x_i = x0
     count = 0
     a_k = 2
+    previous = None
     while True:
         new_x, step_count = _research(func, delta, x_i)
         count += step_count
         if not _np.array_equal(new_x, x_i):
+            if previous is not None and _np.array_equal(previous, new_x):
+                delta /= gamma
+                continue
+            previous = new_x
             x_i = x_i + a_k * (new_x - x_i)
             continue
         if _la.norm(delta) < eps:
@@ -122,7 +127,8 @@ def hooke_jeeves(func, x0, eps):  # error with [9.9, 9.9]
         delta /= gamma
 
 
-def random_search(func, x0, eps):  # FIX: bad result with a == 1000, 250; with a == 1 is near good
+def random_search(func, x0, eps):
+    # TODO: fix bad result with a == 1000, 250; with a == 1 is near good
     max_steps = 3 * len(x0)
     alpha = 1
     gamma = 2.0
