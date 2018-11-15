@@ -37,6 +37,6 @@ def numeric_nuton(func, x_0, eps):
         if count > 1000:
             return (None, None)
         dx2 = (f_1 - 2 * f_0 + f_2) / (eps * eps)
+        if dx2 == 0:
+            return (None, None)
         x = x - dx1 / dx2
-
-# def _find_end(func, begin):
