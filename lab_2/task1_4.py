@@ -41,7 +41,6 @@ def task2(x0, first_fig, param_list, eps_list):
 
 def task3(x0, fig_id, eps_list):
     x0 = _np.array(x0)
-    # TODO: with log ticks
 
     def func_wrap(x):
         return task3_function(x[0], x[1])
@@ -90,7 +89,6 @@ def plot_task2_function(fig_id, x1_limit, a_param):
     x_2 = _np.linspace(-3, 3)
     x_1, x_2 = _np.meshgrid(x_1, x_2)
     z = task2_function(x_1, x_2, a_param)
-    # axes.contour3D(x_1, x_2, z, 64)
     axes.plot_wireframe(x_1, x_2, z)
     axes.set_xlabel("x1")
     axes.set_ylabel("x2")
@@ -106,7 +104,6 @@ def plot_task3_function(fig_id):
     x_2 = _np.linspace(-128, 64)
     x_1, x_2 = _np.meshgrid(x_1, x_2)
     z = task3_function(x_1, x_2)
-    # axes.contour3D(x_1, x_2, z, 64)
     axes.plot_wireframe(x_1, x_2, z)
     axes.set_xlabel("x1")
     axes.set_ylabel("x2")
