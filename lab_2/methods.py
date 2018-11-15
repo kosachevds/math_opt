@@ -135,7 +135,6 @@ def hooke_jeeves(func, x0, eps):
 
 
 def random_search(func, x0, eps):
-    # TODO: fix bad result with a == 1000, 250;
     max_steps = 3 * len(x0)
     alpha = _np.e
     gamma = 1.1
