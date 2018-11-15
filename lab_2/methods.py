@@ -1,4 +1,3 @@
-# TODO: odnedim with one point
 import numpy as _np
 from numpy import linalg as _la
 import onedim as _onedim
@@ -19,7 +18,8 @@ def steepest_descent(func, gradient, x0, eps):
         def func_alpha(alpha):
             return func(x_k - alpha * grad_k)
 
-        alpha_k, step_count = _onedim.minimize(func_alpha, min_alpha, 1, eps)
+        # alpha_k, step_count = _onedim.minimize(func_alpha, min_alpha, 1, eps)
+        alpha_k, step_count = _onedim.numeric_nuton(func_alpha, min_alpha, eps)
         if alpha_k == min_alpha:
             alpha_k = 1
         count += step_count
@@ -39,7 +39,8 @@ def conjugate_gradient(func, gradient, x0, eps):
         def func_alpha(alpha):
             return func(x_k + alpha * p_k)
 
-        alpha_k, step_count = _onedim.minimize(func_alpha, eps, 1, eps)
+        # alpha_k, step_count = _onedim.minimize(func_alpha, eps, 1, eps)
+        alpha_k, step_count = _onedim.numeric_nuton(func_alpha, 0, eps)
         count += step_count
         x_k = x_k + alpha_k * p_k
         grad_next = gradient(x_k)
