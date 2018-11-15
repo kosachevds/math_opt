@@ -105,7 +105,7 @@ def alternating_variable(func, x0, eps):
             return x_i, count
 
 
-def hooke_jeeves(func, x0, eps):  # TODO: fix big counts
+def hooke_jeeves(func, x0, eps):
     delta = _np.ones(len(x0))
     gamma = _np.sqrt(5)
     x_i = x0
@@ -135,10 +135,10 @@ def hooke_jeeves(func, x0, eps):  # TODO: fix big counts
 
 
 def random_search(func, x0, eps):
-    # TODO: fix bad result with a == 1000, 250; with a == 1 is near good
+    # TODO: fix bad result with a == 1000, 250;
     max_steps = 3 * len(x0)
-    alpha = 1
-    gamma = 2.0
+    alpha = _np.e
+    gamma = 1.1
     x_i = x0
     f_i = func(x_i)
     count = 1
@@ -159,6 +159,7 @@ def random_search(func, x0, eps):
         if alpha < eps:
             return x_i, count
         alpha /= gamma
+        ksi_count = 0
 
 
 def _research(func, delta, x0):
