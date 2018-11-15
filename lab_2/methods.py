@@ -110,14 +110,18 @@ def hooke_jeeves(func, x0, eps):  # TODO: fix big counts
     gamma = _np.sqrt(5)
     x_i = x0
     count = 0
-    a_k = 2
     while True:
         new_x, f_i, step_count = _research(func, delta, x_i)
         count += step_count
         if not _np.array_equal(new_x, x_i):
+            # def onedimfunc(alpha):
+            #     return func(x_i + alpha * (new_x - x_i))
+            # a_k, step_count = _onedim.numeric_nuton(onedimfunc, 2, eps)
+            # count += step_count
+            # x_i = x_i + a_k * (new_x - x_i)
             step_vector = new_x - x_i
             while True:
-                new_x = x_i + a_k * step_vector
+                new_x = x_i + 2 * step_vector
                 new_f = func(new_x)
                 count += 1
                 if new_f >= f_i:
