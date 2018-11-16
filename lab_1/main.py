@@ -10,9 +10,9 @@ X_END = 1.5
 def main():
     # plot_function(function, X_BEGIN, X_END, 0)
 
-    # plot_perfomance(1, 2)
+    plot_perfomance(1, 2)
 
-    plot_numeric_vs_analytic(3)
+    # plot_numeric_vs_analytic(3)
 
     pp.show()
 
@@ -31,10 +31,11 @@ def get_count(func, eps):
 
 
 def plot_perfomance(figure1, figure2):
-    eps_list = np.linspace(1e-2, 1e-4, num=30)
+    exp_list = list(range(-2, -6 - 1, -1))
+    eps_list = np.logspace(-2, -6, num=5)
     pp.figure(figure1)
     counts = [get_count(enumerative, eps) for eps in eps_list]
-    pp.plot(eps_list, counts)
+    pp.plot(exp_list, counts)
     pp.ylabel("N")
     pp.xlabel("epsilon")
     pp.title("perfomance: enumerative")
@@ -42,28 +43,28 @@ def plot_perfomance(figure1, figure2):
 
     pp.figure(figure2)
     counts = [get_count(radix, eps) for eps in eps_list]
-    pp.plot(eps_list, counts, label="radix")
+    pp.plot(exp_list, counts, label="radix")
 
     counts = [get_count(dichotomy, eps) for eps in eps_list]
-    pp.plot(eps_list, counts, label="dichotomy")
+    pp.plot(exp_list, counts, label="dichotomy")
 
     counts = [get_count(golden_ratio, eps) for eps in eps_list]
-    pp.plot(eps_list, counts, label="golden_ratio")
+    pp.plot(exp_list, counts, label="golden_ratio")
 
     counts = [get_count(parabolic, eps) for eps in eps_list]
-    pp.plot(eps_list, counts, label="parabolic")
+    pp.plot(exp_list, counts, label="parabolic")
 
     counts = [middle_point(derivative1, X_BEGIN, X_END, eps)[1]
               for eps in eps_list]
-    pp.plot(eps_list, counts, label="middle point")
+    pp.plot(exp_list, counts, label="middle point")
 
     counts = [chords(derivative1, X_BEGIN, X_END, eps)[1]
               for eps in eps_list]
-    pp.plot(eps_list, counts, label="chords")
+    pp.plot(exp_list, counts, label="chords")
 
     counts = [nuton(derivative1, derivative2, X_BEGIN, eps)[1]
               for eps in eps_list]
-    pp.plot(eps_list, counts, label="nuton")
+    pp.plot(exp_list, counts, label="nuton")
 
     pp.ylabel("N")
     pp.xlabel("epsilon")
@@ -79,15 +80,15 @@ def function(x):
 
 
 def derivative1(x):
-    """ 2x - 2 - x * e^(-x)
+    """ 2x - 2 - e^(-x)
     """
-    return 2 * x - 2 - x * np.exp(-x)
+    return 2 * x - 2 - np.exp(-x)
 
 
 def derivative2(x):
-    """ x^2 * e^(-x) + 2
+    """ e^(-x) + 2
     """
-    return x ** 2 * np.exp(-x) + 2
+    return np.exp(-x) + 2
 
 
 def plot_numeric_vs_analytic(figure_id):

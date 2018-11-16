@@ -8,38 +8,56 @@ from matplotlib import pyplot as pp
 
 def main():
     x_min = 0
-    x_begin = x_min - 5
-    x_end = x_min + 5
-    x_list = np.linspace(x_begin, x_end)
+    eps = 1e-5
     for i, item in enumerate(["nuton", "marquardt", "nuton-rafson"]):
         pp.subplot(1, 3, i + 1)
-        pp.plot(x_list, function(x_list))
         pp.title(item)
         pp.xlabel("x")
         pp.ylabel("y")
-    eps = 1e-5
-    for x_0 in x_list:
-        pp.subplot(1, 3, 1)
-        # result = nm.nuton(function, x_0, eps)[0]
+
+    x_0 = 0
+    step = 0.01
+    pp.subplot(1, 3, 1)
+    while True:
         result = methods.nuton(derivative1, derivative2, x_0, eps)[0]
-        if result is None:
-            pp.plot(x_0, function(x_0), marker="x", color="r")
-        else:
-            pp.plot(x_0, function(x_0), marker="o", color="g")
+        if result is not None:
+            pp.plot(x_0, function(x_0), "go", markersize=2)
+            x_0 += step
+            continue
+        pp.plot(x_0, function(x_0), "rx")
+        x_list = np.linspace(x_min, x_0 + step)
+        pp.plot(x_list, function(x_list))
+        pp.title("nuton: " + str(x_0))
+        break
 
-        pp.subplot(1, 3, 2)
+    x_0 = 0
+    pp.subplot(1, 3, 2)
+    while True:
         result = methods.marquardt(derivative1, derivative2, x_0, eps)[0]
-        if result is None:
-            pp.plot(x_0, function(x_0), marker="x", color="r")
-        else:
-            pp.plot(x_0, function(x_0), marker="o", color="g")
+        if result is not None:
+            pp.plot(x_0, function(x_0), "go", markersize=2)
+            x_0 += step
+            continue
+        pp.plot(x_0, function(x_0), "rx")
+        x_list = np.linspace(x_min, x_0 + step)
+        pp.plot(x_list, function(x_list))
+        pp.title("marquardt: " + str(x_0))
+        break
 
-        pp.subplot(1, 3, 3)
+    x_0 = 0
+    pp.subplot(1, 3, 3)
+    while True:
         result = methods.nuton_rafson(derivative1, derivative2, x_0, eps)[0]
-        if result is None:
-            pp.plot(x_0, function(x_0), marker="x", color="r")
-        else:
-            pp.plot(x_0, function(x_0), marker="o", color="g")
+        if result is not None:
+            pp.plot(x_0, function(x_0), "go", markersize=2)
+            x_0 += step
+            continue
+        pp.plot(x_0, function(x_0), "rx")
+        x_list = np.linspace(x_min, x_0 + step)
+        pp.plot(x_list, function(x_list))
+        pp.title("nuton-rafson: " + str(x_0))
+        break
+
     pp.show()
 
 

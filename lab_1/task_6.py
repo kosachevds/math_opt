@@ -5,12 +5,15 @@ from matplotlib import pyplot as pp
 def main():
     epsilon = 1e-4
     x_list = np.linspace(1, 12, 100)
-    pp.subplot(2, 1, 1)
-    plot_task(function1, x_list, epsilon)
+    # pp.subplot(2, 1, 1)
+    # plot_task(function1, x_list, epsilon)
+    #
+    # pp.subplot(2, 1, 2)
+    # x_list = np.linspace(0, 4, 100)
+    # plot_task(function2, x_list, epsilon)
 
-    pp.subplot(2, 1, 2)
-    x_list = np.linspace(0, 4, 100)
-    plot_task(function2, x_list, epsilon)
+    print(broken_lines(function1, x_list[0], x_list[-1], epsilon))
+    print(broken_lines(function1, x_list[0], x_list[-1], epsilon, 1.9221))
 
     pp.show()
 
@@ -50,8 +53,10 @@ def enumerative(func, begin, end, eps):
     return result
 
 
-def broken_lines(func, begin, end, eps):
-    const_l, count = get_l_const(func, begin, end, 8)
+def broken_lines(func, begin, end, eps, const_l=None):
+    count = 0
+    if const_l is None:
+        const_l, count = get_l_const(func, begin, end, 8)
     f_b = func(begin)
     f_e = func(end)
     count += 2
