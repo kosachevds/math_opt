@@ -1,3 +1,4 @@
+# TODO: x_list to x_grid and y and z
 import numpy as _np
 
 
