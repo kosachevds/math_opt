@@ -8,9 +8,9 @@ _CURRENT_DIR = os.path.dirname(__file__)
 
 
 def main():
-    # func1_filename = os.path.join(_CURRENT_DIR, "Funktsia_P2.txt")
+    # func1_filename = os.path.join(_CURRENT_DIR, "data/Funktsia_P2.txt")
     # plot_function(func1_filename)
-    func2_filename = os.path.join(_CURRENT_DIR, "Funktsia_P4_V4.txt")
+    func2_filename = os.path.join(_CURRENT_DIR, "data/Funktsia_P4_V4.txt")
     plot_function(func2_filename)
     _pp.show()
 
