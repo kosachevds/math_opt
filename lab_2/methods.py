@@ -21,7 +21,8 @@ def steepest_descent(func, gradient, x0, eps, eps_1d=None):
 
         alpha_k, step_count = onedim.numeric_nuton(func_alpha, 1, eps_1d)
         if alpha_k is None:
-            alpha_k, step_count = onedim.minimize(func_alpha, min_alpha, 1, eps_1d)
+            alpha_k, step_count = onedim.minimize(func_alpha, min_alpha, 1,
+                                                  eps_1d)
             if alpha_k == min_alpha:
                 return x_k, 0
         count += step_count
@@ -110,7 +111,8 @@ def alternating_variable(func, x0, eps, eps_1d=None):
 
             alpha_j, step_count = onedim.numeric_nuton(func_alpha, 2, eps_1d)
             if alpha_j is None:
-                alpha_j, step_count = onedim.minimize(func_alpha, -3, 3, eps_1d)
+                alpha_j, step_count = onedim.minimize(func_alpha, -3, 3,
+                                                      eps_1d)
             count += step_count
             x_i = x_i + alpha_j * e_j
         if abs(func(x_old) - func(x_i)) <= eps:
