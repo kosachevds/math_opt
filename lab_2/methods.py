@@ -4,8 +4,9 @@ import onedim as _onedim
 from simplex import Simplex
 
 
-def steepest_descent(func, gradient, x0, eps):
-    # TODO with quadratic function matrices
+def steepest_descent(func, gradient, x0, eps, onedim_eps=None):
+    if onedim_eps is None:
+        onedim_eps = eps
     x_k = x0
     count = 0
     min_alpha = _np.finfo(_np.float32).eps
@@ -18,16 +19,19 @@ def steepest_descent(func, gradient, x0, eps):
         def func_alpha(alpha):
             return func(x_k - alpha * grad_k)
 
-        alpha_k, step_count = _onedim.numeric_nuton(func_alpha, 1, eps)
+        alpha_k, step_count = _onedim.numeric_nuton(func_alpha, 1, onedim_eps)
         if alpha_k is None:
-            alpha_k, step_count = _onedim.minimize(func_alpha, min_alpha, 10, eps)
+            alpha_k, step_count = _onedim.minimize(func_alpha, min_alpha, 10,
+                                                   onedim_eps)
             if alpha_k == min_alpha:
                 alpha_k = 1
         count += step_count
         x_k = x_k - alpha_k * grad_k
 
 
-def conjugate_gradient(func, gradient, x0, eps):
+def conjugate_gradient(func, gradient, x0, eps, onedim_eps=None):
+    if onedim_eps is None:
+        onedim_eps = eps
     x_k = x0
     grad_k = gradient(x0)
     p_k = -grad_k
@@ -40,8 +44,8 @@ def conjugate_gradient(func, gradient, x0, eps):
         def func_alpha(alpha):
             return func(x_k + alpha * p_k)
 
-        # alpha_k, step_count = _onedim.minimize(func_alpha, eps, 1, eps)
-        alpha_k, step_count = _onedim.numeric_nuton(func_alpha, 0, eps)
+        # alpha_k, step_count = _onedim.minimize(func_alpha, eps, 1, onedim_eps)
+        alpha_k, step_count = _onedim.numeric_nuton(func_alpha, 0, onedim_eps)
         count += step_count
         x_k = x_k + alpha_k * p_k
         grad_next = gradient(x_k)
@@ -88,7 +92,9 @@ def regular_simplex(func, x0, eps):
             count += simplex.get_count()
 
 
-def alternating_variable(func, x0, eps):
+def alternating_variable(func, x0, eps, onedim_eps=None):
+    if onedim_eps is None:
+        onedim_eps = eps
     x_i = x0
     size = len(x0)
     count = 0
@@ -100,7 +106,8 @@ def alternating_variable(func, x0, eps):
             def func_alpha(alpha):
                 return func(x_i + alpha * e_j)
 
-            alpha_j, step_count = _onedim.numeric_nuton(func_alpha, 0, eps)
+            alpha_j, step_count = _onedim.numeric_nuton(func_alpha, 0,
+                                                        onedim_eps)
             count += step_count
             x_i = x_i + alpha_j * e_j
         if _la.norm(x_old - x_i) <= eps:
@@ -116,11 +123,6 @@ def hooke_jeeves(func, x0, eps):
         new_x, f_i, step_count = _research(func, delta, x_i)
         count += step_count
         if not _np.array_equal(new_x, x_i):
-            # def onedimfunc(alpha):
-            #     return func(x_i + alpha * (new_x - x_i))
-            # a_k, step_count = _onedim.numeric_nuton(onedimfunc, 2, eps)
-            # count += step_count
-            # x_i = x_i + a_k * (new_x - x_i)
             step_vector = new_x - x_i
             while True:
                 new_x = x_i + 2 * step_vector
