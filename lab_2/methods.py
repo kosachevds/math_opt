@@ -1,12 +1,12 @@
 import numpy as _np
 from numpy import linalg as _la
-import onedim as _onedim
+import onedim
 from simplex import Simplex
 
 
-def steepest_descent(func, gradient, x0, eps, onedim_eps=None):
-    if onedim_eps is None:
-        onedim_eps = eps
+def steepest_descent(func, gradient, x0, eps, eps_1d=None):
+    if eps_1d is None:
+        eps_1d = eps
     x_k = x0
     count = 0
     min_alpha = _np.finfo(_np.float32).eps
@@ -19,19 +19,18 @@ def steepest_descent(func, gradient, x0, eps, onedim_eps=None):
         def func_alpha(alpha):
             return func(x_k - alpha * grad_k)
 
-        alpha_k, step_count = _onedim.numeric_nuton(func_alpha, 1, onedim_eps)
+        alpha_k, step_count = onedim.numeric_nuton(func_alpha, 1, eps_1d)
         if alpha_k is None:
-            alpha_k, step_count = _onedim.minimize(func_alpha, min_alpha, 10,
-                                                   onedim_eps)
+            alpha_k, step_count = onedim.minimize(func_alpha, eps, 1, eps_1d)
             if alpha_k == min_alpha:
-                alpha_k = 1
+                return x_k, 0
         count += step_count
         x_k = x_k - alpha_k * grad_k
 
 
-def conjugate_gradient(func, gradient, x0, eps, onedim_eps=None):
-    if onedim_eps is None:
-        onedim_eps = eps
+def conjugate_gradient(func, gradient, x0, eps, eps_1d=None):
+    if eps_1d is None:
+        eps_1d = eps
     x_k = x0
     grad_k = gradient(x0)
     p_k = -grad_k
@@ -44,9 +43,12 @@ def conjugate_gradient(func, gradient, x0, eps, onedim_eps=None):
         def func_alpha(alpha):
             return func(x_k + alpha * p_k)
 
-        # alpha_k, step_count = _onedim.minimize(func_alpha, eps, 1, onedim_eps)
-        alpha_k, step_count = _onedim.numeric_nuton(func_alpha, 0, onedim_eps)
+        # alpha_k, step_count = onedim.numeric_nuton(func_alpha, 0, eps_1d)
+        # if alpha_k is None:
+        alpha_k, step_count = onedim.minimize(func_alpha, -2, 2, eps_1d)
         count += step_count
+        if alpha_k == 0:
+            return x_k, 0
         x_k = x_k + alpha_k * p_k
         grad_next = gradient(x_k)
         beta = (_la.norm(grad_next) / _la.norm(grad_k)) ** 2
@@ -92,9 +94,9 @@ def regular_simplex(func, x0, eps):
             count += simplex.get_count()
 
 
-def alternating_variable(func, x0, eps, onedim_eps=None):
-    if onedim_eps is None:
-        onedim_eps = eps
+def alternating_variable(func, x0, eps, eps_1d=None):
+    if eps_1d is None:
+        eps_1d = eps
     x_i = x0
     size = len(x0)
     count = 0
@@ -106,11 +108,12 @@ def alternating_variable(func, x0, eps, onedim_eps=None):
             def func_alpha(alpha):
                 return func(x_i + alpha * e_j)
 
-            alpha_j, step_count = _onedim.numeric_nuton(func_alpha, 0,
-                                                        onedim_eps)
+            alpha_j, step_count = onedim.numeric_nuton(func_alpha, 2, eps_1d)
+            if alpha_j is None:
+                alpha_j, step_count = onedim.minimize(func_alpha, -3, 3, eps_1d)
             count += step_count
             x_i = x_i + alpha_j * e_j
-        if _la.norm(x_old - x_i) <= eps:
+        if abs(func(x_old) - func(x_i)) <= eps:
             return x_i, count
 
 
