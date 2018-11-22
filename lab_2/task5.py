@@ -12,6 +12,11 @@ def main():
     # plot_counts(eps_list, eps_1d_list)
     plot_errors(eps_list, eps_1d_list)
 
+    # TODO: передавать X_MIN в метод;
+    # останавливать работу если достигнута необходимая точность до X_MIN
+    # построить графики counts для этого
+    # TODO: определить, для каких eps метод не достигает заданной точности
+
     pp.show()
 
 
