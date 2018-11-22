@@ -21,7 +21,7 @@ def steepest_descent(func, gradient, x0, eps, eps_1d=None):
 
         alpha_k, step_count = onedim.numeric_nuton(func_alpha, 1, eps_1d)
         if alpha_k is None:
-            alpha_k, step_count = onedim.minimize(func_alpha, eps, 1, eps_1d)
+            alpha_k, step_count = onedim.minimize(func_alpha, min_alpha, 1, eps_1d)
             if alpha_k == min_alpha:
                 return x_k, 0
         count += step_count

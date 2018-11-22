@@ -8,26 +8,32 @@ X_MIN = np.array([1, 1])
 
 def main():
     eps_list = np.logspace(-3, -5, 2)
-    onedim_list = np.logspace(-4, -8, 3)
-    for i, eps in enumerate(eps_list):
-        pp.figure(i - 1)
-        pp.title("eps = %f" % eps)
-        pp.ylabel("count")
-        pp.xlabel("onedim eps")
+    eps_1d_list = np.logspace(-4, -8, 3)
+    # plot_counts(eps_list, eps_1d_list)
 
-        plot_method(methods.steepest_descent, True, eps, onedim_list,
-                    "Steepest descent")
-        plot_method(methods.conjugate_gradient, True, eps, onedim_list,
-                    "Conj. gradients")
-        plot_method(methods.alternating_variable, False, eps, onedim_list,
-                    "Alter. variables")
-
-        pp.gca().invert_xaxis()
-        pp.legend()
     pp.show()
 
 
-def plot_method(method, with_gradient, eps, eps_1d_list, label=None):
+def plot_counts(eps_list, eps_1d_list):
+    for i, eps in enumerate(eps_list):
+        eps_log = np.log10(eps)
+        pp.figure(i - 1)
+        pp.title("eps^(%f)" % eps_log)
+        pp.ylabel("count")
+        pp.xlabel("onedim eps")
+
+        plot_method_counts(methods.steepest_descent, True, eps, eps_1d_list,
+                           "Steepest descent")
+        plot_method_counts(methods.conjugate_gradient, True, eps, eps_1d_list,
+                           "Conj. gradients")
+        plot_method_counts(methods.alternating_variable, False, eps, eps_1d_list,
+                           "Alter. variables")
+
+        pp.gca().invert_xaxis()
+        pp.legend()
+
+
+def plot_method_counts(method, with_gradient, eps, eps_1d_list, label=None):
     if with_gradient:
         pairs = [method(rosenbrock, rosenbrock_gradient, X_0, eps, eps_1d)
                  for eps_1d in eps_1d_list]
@@ -44,6 +50,17 @@ def plot_method(method, with_gradient, eps, eps_1d_list, label=None):
             marker_format = "rx"
         count_i = pairs[i][1]
         pp.plot(eps_1d, count_i, marker_format)
+
+
+def plot_method_error(method, with_gradient, eps, eps_1d_list, label=None):
+    if with_gradient:
+        x_list = [method(rosenbrock, rosenbrock_gradient, X_0, eps, eps_1d)[0]
+                  for eps_1d in eps_1d_list]
+    else:
+        x_list = [method(rosenbrock, X_0, eps, eps_1d)[0]
+                  for eps_1d in eps_1d_list]
+    errors = [np.linalg.norm(X_MIN - x_min) for x_min in x_list]
+    pp.plot(np.log10(eps_1d_list), errors, label=label)
 
 
 def rosenbrock(x):
