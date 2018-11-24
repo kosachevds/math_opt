@@ -9,19 +9,19 @@ def enumerative(x_list, y_list, z_list):
 
 def simulated_annealing(z_grid, i_0, j_0):
     # max_k = 1000
-    max_t = 100
+    max_t = 1.1
     min_t = 0.001
     grid_size = len(z_grid)
 
     def temperature(iteration):
-        return max_t / (iteration + 1)
+        return max_t * 0.1 / (iteration + 1)
 
-    d_k = grid_size / 2
+    d_k = grid_size / 8
     t_k = max_t
     i_k, j_k = i_0, j_0
     f_k = z_grid[i_k, j_k]
     count = 1
-    k = 1
+    k = 0
     # while k < max_k:
     while t_k > min_t and d_k > 1:
         new_i = _get_new_index(i_k, d_k, grid_size)
@@ -33,8 +33,10 @@ def simulated_annealing(z_grid, i_0, j_0):
             i_k = new_i
             j_k = new_j
             f_k = new_f
-        t_k = temperature(k + 1)
-        d_k /= 2.0
+        k += 1
+        t_k = temperature(k)
+        # if k % 1000 == 0:
+        #     d_k /= 2
     return i_k, j_k, count
 
 
