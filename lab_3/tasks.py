@@ -1,5 +1,5 @@
 import os
-import numpy as _np
+import numpy as np
 from matplotlib import pyplot as _pp
 from mpl_toolkits.mplot3d import Axes3D
 
@@ -20,18 +20,23 @@ def plot_function(filename):
         text_lines = [line.split() for line in func_file.readlines()]
 
     def get_float_column(lines, index):
-        return _np.array([float(x[index]) for x in lines if x])
+        return np.array([float(x[index]) for x in lines if x])
 
     x = get_float_column(text_lines, 0)
     y = get_float_column(text_lines, 1)
     z = get_float_column(text_lines, 2)
-    size = len(x)
-    noise = _np.random.rand(size) - 0.5
-    x += noise
-    y += noise
     axes = _pp.axes(projection="3d")
     axes.scatter3D(x, y, z)
 
+
+def transform(var_list):
+    matrix = []
+    size = np.sqrt(len(var_list))
+    for i in range(size):
+        matrix.append([])
+        for j in range(size):
+            matrix[i].append(var_list[i * size + j])
+    return matrix
 
 
 if __name__ == "__main__":
