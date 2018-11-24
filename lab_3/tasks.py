@@ -2,17 +2,28 @@ import os
 import numpy as np
 from matplotlib import pyplot as pp
 from mpl_toolkits.mplot3d import Axes3D
+import methods
 
 
 _CURRENT_DIR = os.path.dirname(__file__)
 
 
 def main():
-    func1_filename = os.path.join(_CURRENT_DIR, "data/Funktsia_P2.txt")
-    plot_function(func1_filename, False)
     # func2_filename = os.path.join(_CURRENT_DIR, "data/Funktsia_P4_V4.txt")
     # plot_function(func2_filename, False)
+    common_task()
     pp.show()
+
+
+def common_task():
+    func_filename = os.path.join(_CURRENT_DIR, "data/Funktsia_P2.txt")
+    x, y, z = read_function(func_filename, True)
+    i_min, j_min, _ = methods.simulated_annealing(z, 27, 10)
+    axes = Axes3D(pp.figure())
+    axes.plot_surface(x, y, z)
+    # plot_function(func_filename, False)
+    axes.scatter(x[i_min, j_min], y[i_min, j_min], z[i_min, j_min], c="r",
+                 s=1000)
 
 
 def plot_function(filename, surface):
