@@ -9,13 +9,22 @@ _CURRENT_DIR = os.path.dirname(__file__)
 
 def main():
     func1_filename = os.path.join(_CURRENT_DIR, "data/Funktsia_P2.txt")
-    plot_function(func1_filename)
+    plot_function(func1_filename, False)
     # func2_filename = os.path.join(_CURRENT_DIR, "data/Funktsia_P4_V4.txt")
-    # plot_function(func2_filename)
+    # plot_function(func2_filename, False)
     pp.show()
 
 
-def plot_function(filename):
+def plot_function(filename, surface):
+    x, y, z = read_function(filename, surface)
+    axes = pp.axes(projection="3d")
+    if surface:
+        axes.plot_surface(x, y, z)
+    else:
+        axes.scatter3D(x, y, z)
+
+
+def read_function(filename, as_grids):
     with open(filename, "rt") as func_file:
         text_lines = [line.split() for line in func_file.readlines()]
 
@@ -25,12 +34,12 @@ def plot_function(filename):
     x = get_float_column(text_lines, 0)
     y = get_float_column(text_lines, 1)
     z = get_float_column(text_lines, 2)
-    axes = pp.axes(projection="3d")
-    axes.scatter3D(x, y, z)
-    # x_grid = transform(x)
-    # y_grid = transform(y)
-    # z_grid = transform(z)
-    # axes.plot_surface(x_grid, y_grid, z_grid)
+    if not as_grids:
+        return x, y, z
+    x_grid = transform(x)
+    y_grid = transform(y)
+    z_grid = transform(z)
+    return x_grid, y_grid, z_grid
 
 
 def transform(var_list):
