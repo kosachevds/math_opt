@@ -41,12 +41,24 @@ def simulated_annealing(z_grid, i_0, j_0):
 
 
 def genetic_search(z_grid, population_size):
+    max_count = 1000
     grid_size = len(z_grid)
     population = np.random.randint(0, grid_size, size=(population_size, 2))
     population = [tuple(gene) for gene in population]
-    childs = []
-    # while len(childs) < population_size:
-        # child =
+    generation_count = 1
+    f_values = [z_grid(gene) for gene in population]
+    while generation_count < max_count:
+        childs = _get_new_generation(population, f_values)
+        mutation(childs, 1/4, grid_size)
+        childs_f = [z_grid[gene] for gene in childs]
+        population += childs
+        f_values += childs_f
+        pairs = list(zip(population, f_values))
+        pairs.sort(key=(lambda p: p[1]))
+        pairs = pairs[population_size:]
+        population, f_values = zip(*pairs)
+        generation_count += 1
+    return population[-1]
 
 
 def random_search(x_grid, y_grid, z_grid, i_0, j_0):
