@@ -41,23 +41,26 @@ def simulated_annealing(z_grid, i_0, j_0):
 
 
 def genetic_search(z_grid, population_size):
-    max_count = 1000
+    max_count = 100
     grid_size = len(z_grid)
     population = np.random.randint(0, grid_size, size=(population_size, 2))
     population = [tuple(gene) for gene in population]
     generation_count = 1
-    f_values = [z_grid(gene) for gene in population]
-    while generation_count < max_count:
+    f_values = [z_grid[gene] for gene in population]
+    while generation_count < max_count: #and max(f_values) - min(f_values) > 0.04:
+        # TODO: stop condition with f_values
         childs = _get_new_generation(population, f_values)
-        mutation(childs, 1/4, grid_size)
+        _mutation(childs, 1/2, grid_size)
         childs_f = [z_grid[gene] for gene in childs]
         population += childs
         f_values += childs_f
         pairs = list(zip(population, f_values))
         pairs.sort(key=(lambda p: p[1]))
         pairs = pairs[population_size:]
-        population, f_values = zip(*pairs)
+        population, f_values = [list(x) for x in zip(*pairs)]
         generation_count += 1
+        if len(set(population)) <= population_size / 2:
+            break
     return population[-1]
 
 
@@ -65,7 +68,7 @@ def random_search(x_grid, y_grid, z_grid, i_0, j_0):
     pass
 
 
-def pattern_search(x_grid, y_grid, z_grid, i_0, j_0):
+def _pattern_search(x_grid, y_grid, z_grid, i_0, j_0):
     pass
 
 
@@ -81,9 +84,9 @@ def _do_annearling_jump(t_i, d_f):
 
 
 def _get_gene_pair(genes, weights):
-    # f_sum = sum(f_values)
-    # weights = [item / f_sum for item in f_values]
-    return tuple(np.random.choice(genes, size=(1, 2), p=weights))
+    indices = np.random.choice(len(genes), size=2, replace=False, p=weights)
+    indices.sort()
+    return tuple(genes[i] for i in indices)
 
 
 def _get_child(gene_pair):
@@ -103,12 +106,12 @@ def _get_new_generation(genes, f_values):
     return [_get_child(p) for p in pairs]
 
 
-def mutation(genes, proportion, grid_size):
-    mutant_count = np.floor(proportion * len(genes))
+def _mutation(genes, proportion, grid_size):
+    mutant_count = int(proportion * len(genes))
     indices = np.random.randint(len(genes), size=mutant_count)
     for index in indices:
         item_index = np.random.randint(2)
         new_value = np.random.randint(grid_size)
         gene = list(genes[index])
         gene[item_index] = new_value
-        genes[index][item_index] = tuple(gene)
+        genes[index] = tuple(gene)
