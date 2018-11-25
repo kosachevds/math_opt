@@ -16,7 +16,7 @@ def simulated_annealing(z_grid, i_0, j_0):
     def temperature(iteration):
         return max_t * 0.1 / (iteration + 1)
 
-    d_k = grid_size / 8
+    d_k = grid_size / 4
     t_k = max_t
     i_k, j_k = i_0, j_0
     f_k = z_grid[i_k, j_k]
@@ -40,15 +40,15 @@ def simulated_annealing(z_grid, i_0, j_0):
     return i_k, j_k, count
 
 
-def genetic_search(x_list, y_list, z_list, x_0, y_0):
+def genetic_search(x_grid, y_grid, z_grid, i_0, j_0):
     pass
 
 
-def random_search(x_list, y_list, z_list, x_0, y_0):
+def random_search(x_grid, y_grid, z_grid, i_0, j_0):
     pass
 
 
-def pattern_search(x_list, y_list, z_list, x_0, y_0):
+def pattern_search(x_grid, y_grid, z_grid, i_0, j_0):
     pass
 
 
