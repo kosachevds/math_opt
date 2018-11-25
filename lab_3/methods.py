@@ -40,8 +40,13 @@ def simulated_annealing(z_grid, i_0, j_0):
     return i_k, j_k, count
 
 
-def genetic_search(x_grid, y_grid, z_grid, i_0, j_0):
-    pass
+def genetic_search(z_grid, population_size):
+    grid_size = len(z_grid)
+    population = np.random.randint(0, grid_size, size=(population_size, 2))
+    population = [tuple(gene) for gene in population]
+    childs = []
+    # while len(childs) < population_size:
+        # child =
 
 
 def random_search(x_grid, y_grid, z_grid, i_0, j_0):
@@ -64,6 +69,8 @@ def _do_annearling_jump(t_i, d_f):
 
 
 def _get_gene_pair(genes, weights):
+    # f_sum = sum(f_values)
+    # weights = [item / f_sum for item in f_values]
     return tuple(np.random.choice(genes, size=(1, 2), p=weights))
 
 
@@ -71,3 +78,14 @@ def _get_child(gene_pair):
     first_item_parent = np.random.randint(2)
     other_item_parent = int(not first_item_parent)
     return (gene_pair[first_item_parent][0], gene_pair[other_item_parent][1])
+
+
+def _get_new_generation(genes, f_values):
+    population_size = len(genes)
+    f_sum = sum(f_values)
+    weights = [item / f_sum for item in f_values]
+    pairs = set()
+    while len(pairs) < population_size:
+        new_pair = _get_gene_pair(genes, weights)
+        pairs.add(new_pair)
+    return [_get_child(p) for p in pairs]
