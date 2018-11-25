@@ -89,3 +89,14 @@ def _get_new_generation(genes, f_values):
         new_pair = _get_gene_pair(genes, weights)
         pairs.add(new_pair)
     return [_get_child(p) for p in pairs]
+
+
+def mutation(genes, proportion, grid_size):
+    mutant_count = np.floor(proportion * len(genes))
+    indices = np.random.randint(len(genes), size=mutant_count)
+    for index in indices:
+        item_index = np.random.randint(2)
+        new_value = np.random.randint(grid_size)
+        gene = list(genes[index])
+        gene[item_index] = new_value
+        genes[index][item_index] = tuple(gene)
