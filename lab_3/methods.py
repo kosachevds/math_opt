@@ -43,12 +43,13 @@ def simulated_annealing(z_grid, i_0, j_0):
 def genetic_search(z_grid, population_size):
     max_count = 100
     grid_size = len(z_grid)
-    population = np.random.randint(0, grid_size, size=(population_size, 2))
+    population = np.random.randint(grid_size, size=(population_size, 2))
     population = [tuple(gene) for gene in population]
     generation_count = 1
     f_values = [z_grid[gene] for gene in population]
     while generation_count < max_count: #and max(f_values) - min(f_values) > 0.04:
         # TODO: stop condition with f_values
+        # Добавить "встряску"
         childs = _get_new_generation(population, f_values)
         _mutation(childs, 1/2, grid_size)
         childs_f = [z_grid[gene] for gene in childs]
