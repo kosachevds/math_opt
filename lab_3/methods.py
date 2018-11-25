@@ -61,3 +61,13 @@ def _do_annearling_jump(t_i, d_f):
     factor_d = 1
     probability = np.exp(-factor_d * d_f / t_i)
     return np.random.rand() <= probability
+
+
+def _get_gene_pair(genes, weights):
+    return tuple(np.random.choice(genes, size=(1, 2), p=weights))
+
+
+def _get_child(gene_pair):
+    first_item_parent = np.random.randint(2)
+    other_item_parent = int(not first_item_parent)
+    return (gene_pair[first_item_parent][0], gene_pair[other_item_parent][1])
