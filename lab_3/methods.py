@@ -64,8 +64,27 @@ def genetic_search(z_grid, population_size):
     return population[-1]
 
 
-def random_search(x_grid, y_grid, z_grid, i_0, j_0):
-    pass
+def random_search(z_grid, i_0, j_0):
+    grid_size = len(z_grid)
+    d_k = grid_size / 2
+    max_step = 6
+    step_count = 0
+    i_k, j_k = i_0, j_0
+    f_k = z_grid[i_k, j_k]
+    while d_k > 1:
+        step_count += 1
+        new_i = _get_new_index(i_0, d_k, grid_size)
+        new_j = _get_new_index(j_0, d_k, grid_size)
+        new_f = z_grid[new_i, new_j]
+        if new_f > f_k:
+            i_k = new_i
+            j_k = new_j
+            f_k = new_f
+            step_count = 0
+        elif step_count == max_step:
+            step_count = 0
+            d_k /= 2
+    return i_k, j_k
 
 
 def _pattern_search(x_grid, y_grid, z_grid, i_0, j_0):
