@@ -19,7 +19,8 @@ def common_task():
     func_filename = os.path.join(_CURRENT_DIR, "data/Funktsia_P2.txt")
     x, y, z = read_function(func_filename, True)
     # i_min, j_min, _ = methods.simulated_annealing(z, 10, 10)
-    i_min, j_min = methods.genetic_search(z, 20)
+    i_min, j_min = methods.genetic_search(z, 10)
+    test_genetic_search(z, 10, 100)
     # i_min, j_min = methods.random_search(z, 10, 10)
     axes = Axes3D(pp.figure())
     axes.plot_wireframe(x, y, z)
@@ -64,6 +65,15 @@ def transform(var_list):
             matrix[i].append(var_list[i * size + j])
     return np.array(matrix)
 
+
+def test_genetic_search(z_grid, population_size, launch_count):
+    ref_point = methods.enumerative(z_grid)
+    ref_z = z_grid[ref_point]
+    errors = []
+    for _ in range(launch_count):
+        x_max = methods.genetic_search(z_grid, population_size)
+        errors.append(abs(ref_z - z_grid[x_max]))
+    print(np.mean(errors), np.std(errors))
 
 if __name__ == "__main__":
     main()
