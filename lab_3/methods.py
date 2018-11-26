@@ -2,9 +2,8 @@
 import numpy as np
 
 
-def enumerative(x_list, y_list, z_list):
-    index = np.argmax(z_list)
-    return (x_list[index], y_list[index])
+def enumerative(z_grid):
+    return np.unravel_index(np.argmax(z_grid), z_grid.shape)
 
 
 def simulated_annealing(z_grid, i_0, j_0):
@@ -47,7 +46,7 @@ def genetic_search(z_grid, population_size):
     population = [tuple(gene) for gene in population]
     generation_count = 1
     f_values = [z_grid[gene] for gene in population]
-    while generation_count < max_count: #and max(f_values) - min(f_values) > 0.04:
+    while generation_count < max_count and max(f_values) - min(f_values) > 0.009:
         # TODO: stop condition with f_values
         # Добавить "встряску"
         childs = _get_new_generation(population, f_values)
@@ -60,8 +59,12 @@ def genetic_search(z_grid, population_size):
         pairs = pairs[population_size:]
         population, f_values = [list(x) for x in zip(*pairs)]
         generation_count += 1
-        if _count_unique(population) <= population_size / 2:
-            break
+        if _count_unique(population) <= np.ceil(population_size * 0.75):
+            population = _mutation_not_unique(population, grid_size)
+            f_values = [z_grid[gene] for gene in population]
+            pairs = list(zip(population, f_values))
+            pairs.sort(key=(lambda p: p[1]))
+            population, f_values = [list(x) for x in zip(*pairs)]
     return population[-1]
 
 
@@ -131,6 +134,7 @@ def _mutation(genes, proportion, grid_size):
     indices = np.random.choice(len(genes), size=mutant_count, replace=False)
     for index in indices:
         genes[index] = _mutation_gene(genes[index], grid_size)
+    return genes
 
 
 def _mutation_gene(gene, grid_size):
@@ -143,3 +147,12 @@ def _mutation_gene(gene, grid_size):
 
 def _count_unique(values):
     return len(set(values))
+
+
+def _mutation_not_unique(genes, grid_size):
+    count = len(genes)
+    for i in range(count):
+        for j in range(i + 1, count):
+            if genes[j] == genes[i]:
+                genes[j] = _mutation_gene(genes[j], grid_size)
+    return genes
