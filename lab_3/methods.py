@@ -60,7 +60,7 @@ def genetic_search(z_grid, population_size):
         pairs = pairs[population_size:]
         population, f_values = [list(x) for x in zip(*pairs)]
         generation_count += 1
-        if len(set(population)) <= population_size / 2:
+        if _count_unique(population) <= population_size / 2:
             break
     return population[-1]
 
@@ -130,8 +130,16 @@ def _mutation(genes, proportion, grid_size):
     mutant_count = int(proportion * len(genes))
     indices = np.random.choice(len(genes), size=mutant_count, replace=False)
     for index in indices:
-        item_index = np.random.randint(2)
-        new_value = np.random.randint(grid_size)
-        gene = list(genes[index])
-        gene[item_index] = new_value
-        genes[index] = tuple(gene)
+        genes[index] = _mutation_gene(genes[index], grid_size)
+
+
+def _mutation_gene(gene, grid_size):
+    item_index = np.random.randint(2)
+    new_value = np.random.randint(grid_size)
+    gene = list(gene)
+    gene[item_index] = new_value
+    return tuple(gene)
+
+
+def _count_unique(values):
+    return len(set(values))
