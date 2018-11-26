@@ -46,13 +46,16 @@ def genetic_search(z_grid, population_size):
     population = [tuple(gene) for gene in population]
     generation_count = 1
     f_values = [z_grid[gene] for gene in population]
-    while generation_count < max_count and _count_unique(f_values) > population_size / 2:
+    # greatest = f_values[0]
+    # max_list = []
+    while generation_count < max_count and max(f_values) - min(f_values) > 0.05:
         childs = _get_new_generation(population, f_values)
         _mutation(childs, 1/2, grid_size)
         childs_f = [z_grid[gene] for gene in childs]
         population += childs
         f_values += childs_f
         population, f_values = _sort_population(population, f_values)
+        # TODO: брать только уникальные гены, если недостаточно, мутировать неуникальные
         population = population[population_size:]
         f_values = f_values[population_size:]
         if _count_unique(population) <= np.ceil(population_size * 0.5):
@@ -60,6 +63,17 @@ def genetic_search(z_grid, population_size):
             f_values = [z_grid[gene] for gene in population]
             population, f_values = _sort_population(population, f_values)
         generation_count += 1
+
+        # max_list.append(f_values[-1])
+        # if len(max_list) > 2 and _count_unique(max_list[-3:]) == 1:
+        #     if f_values[-1] == greatest:
+        #         break
+        #     greatest = max(greatest, f_values[-1])
+        #     population[:-1] = np.random.randint(grid_size, size=(population_size - 1, 2))
+        #     population = [tuple(gene) for gene in population]
+        #     f_values = [z_grid[gene] for gene in population]
+        #     population, f_values = _sort_population(population, f_values)
+        #     max_list = []
     return population[-1]
 
 
