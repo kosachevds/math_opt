@@ -19,8 +19,9 @@ def common_task():
     func_filename = os.path.join(_CURRENT_DIR, "data/Funktsia_P2.txt")
     x, y, z = read_function(func_filename, True)
     # i_min, j_min, _ = methods.simulated_annealing(z, 10, 10)
-    i_min, j_min = methods.genetic_search(z, 10)
-    test_genetic_search(z, 10, 100)
+    population_size = 5
+    i_min, j_min = methods.genetic_search(z, population_size)
+    test_genetic_search(z, population_size, 100)
     # i_min, j_min = methods.random_search(z, 10, 10)
     axes = Axes3D(pp.figure())
     axes.plot_wireframe(x, y, z)

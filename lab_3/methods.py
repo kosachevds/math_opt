@@ -46,25 +46,20 @@ def genetic_search(z_grid, population_size):
     population = [tuple(gene) for gene in population]
     generation_count = 1
     f_values = [z_grid[gene] for gene in population]
-    while generation_count < max_count and max(f_values) - min(f_values) > 0.009:
-        # TODO: stop condition with f_values
-        # Добавить "встряску"
+    while generation_count < max_count and _count_unique(f_values) > population_size / 2:
         childs = _get_new_generation(population, f_values)
         _mutation(childs, 1/2, grid_size)
         childs_f = [z_grid[gene] for gene in childs]
         population += childs
         f_values += childs_f
-        pairs = list(zip(population, f_values))
-        pairs.sort(key=(lambda p: p[1]))
-        pairs = pairs[population_size:]
-        population, f_values = [list(x) for x in zip(*pairs)]
-        generation_count += 1
-        if _count_unique(population) <= np.ceil(population_size * 0.75):
+        population, f_values = _sort_population(population, f_values)
+        population = population[population_size:]
+        f_values = f_values[population_size:]
+        if _count_unique(population) <= np.ceil(population_size * 0.5):
             population = _mutation_not_unique(population, grid_size)
             f_values = [z_grid[gene] for gene in population]
-            pairs = list(zip(population, f_values))
-            pairs.sort(key=(lambda p: p[1]))
-            population, f_values = [list(x) for x in zip(*pairs)]
+            population, f_values = _sort_population(population, f_values)
+        generation_count += 1
     return population[-1]
 
 
@@ -156,3 +151,9 @@ def _mutation_not_unique(genes, grid_size):
             if genes[j] == genes[i]:
                 genes[j] = _mutation_gene(genes[j], grid_size)
     return genes
+
+
+def _sort_population(population, f_values):
+    pairs = list(zip(population, f_values))
+    pairs.sort(key=(lambda p: p[1]))
+    return [list(x) for x in zip(*pairs)]
