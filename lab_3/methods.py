@@ -128,7 +128,7 @@ def _get_new_generation(genes, f_values):
 
 def _mutation(genes, proportion, grid_size):
     mutant_count = int(proportion * len(genes))
-    indices = np.random.randint(len(genes), size=mutant_count)
+    indices = np.random.choice(len(genes), size=mutant_count, replace=False)
     for index in indices:
         item_index = np.random.randint(2)
         new_value = np.random.randint(grid_size)
