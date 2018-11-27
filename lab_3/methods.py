@@ -48,8 +48,13 @@ def genetic_search(z_grid, population_size):
     population = [tuple(gene) for gene in population]
     generation_count = 1
     f_values = [z_grid[gene] for gene in population]
-    while generation_count < max_count and max(f_values) - min(f_values) > 0.002:
+    max_list = [max(f_values)]
+    greatest = max_list[-1]
+    while generation_count < max_count:
+        max_list.append(max(f_values))
+        greatest = max(greatest, max_list[-1])
         if _count_possible_pairs(population) < population_size:
+            population[-1] = _micromutation(population[-1], grid_size)
             population = _mutation_not_unique(population, grid_size)
             f_values = [z_grid[gene] for gene in population]
             population, f_values = _sort_population(population, f_values)
@@ -64,6 +69,8 @@ def genetic_search(z_grid, population_size):
         population = population[population_size:]
         f_values = f_values[population_size:]
         generation_count += 1
+        if f_values[-1] - f_values[0] < 0.0013 and f_values[-1] >= greatest:
+            break
     return population[-1]
 
 
@@ -173,11 +180,14 @@ def _count_possible_pairs(genes):
             (np.math.factorial(unique_count - 2) * 2))
 
 
-def _gene_micromutation(gene):
+def _micromutation(gene, max_size):
     shift = 1
     if bool(np.random.randint(2)):
         shift = -1
     index = np.random.randint(2)
+    new_item = gene[index] + shift
+    if new_item >= max_size or new_item < 0:
+        shift *= -1
     gene = list(gene)
     gene[index] += shift
     return tuple(gene)
