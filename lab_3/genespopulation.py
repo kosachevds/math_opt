@@ -14,14 +14,18 @@ class GenesPopulation():
         self.__size = population_size
         self.__genes = np.random.randint(self.__grid_size,
                                          size=(population_size, 2))
+        self.__genes = [tuple(g) for g in self.__genes]
         self.__calculate_values()
         self.__sort()
 
     def get_best_gene(self):
-        return tuple(self.__genes[-1])
+        return self.__genes[-1]
 
     def get_best_value(self):
         return self.__values[-1]
+
+    def values_gap(self):
+        return self.__values[-1] - self.__values[0]
 
     def new_generation(self, mutation_ratio):
         if self.__count_possible_pairs() < self.__size:
@@ -53,11 +57,11 @@ class GenesPopulation():
         return [self.__get_child(p) for p in parents]
 
     def __calculate_values(self):
-        self.__values = [self.__grid[tuple(g)] for g in self.__genes]
+        self.__values = [self.__grid[g] for g in self.__genes]
 
     def __sort(self):
-        pairs = zip(self.__genes, self.__values)
-        pairs = sorted(pairs, key=(lambda x: x[1]))
+        pairs = list(zip(self.__genes, self.__values))
+        pairs.sort(key=(lambda x: x[1]))
         self.__genes, self.__values = [list(x) for x in zip(*pairs)]
 
     def __mutation_not_unique(self):
@@ -78,10 +82,10 @@ class GenesPopulation():
             add *= -1
         gene = list(gene)
         gene[index] += add
-        return gene
+        return tuple(gene)
 
     def __count_unique_genes(self):
-        return len(set(self.__genes))
+        return len(set(tuple(g) for g in self.__genes))
 
     def __count_possible_pairs(self):
         unique_count = self.__count_unique_genes()
@@ -118,5 +122,6 @@ class GenesPopulation():
     def __mutation_gene(gene, grid_size):
         item_index = np.random.randint(2)
         new_value = np.random.randint(grid_size)
+        gene = list(gene)
         gene[item_index] = new_value
-        return gene
+        return tuple(gene)
