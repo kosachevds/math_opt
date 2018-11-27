@@ -1,0 +1,117 @@
+import numpy as np
+
+
+class GenesPopulation(object):
+    __grid = None
+    __genes = None
+    __values = None
+    __grid_size = None
+    __size = None
+
+    def __init__(self, grid, population_size):
+        self.__grid = grid
+        self.__grid_size = len(grid)
+        self.__size = population_size
+        self.__genes = np.random.randint(self.__grid_size,
+                                         size=(population_size, 2))
+        self.__calculate_values()
+        self.__sort()
+
+    def get_best_gene(self):
+        return tuple(self.__genes[-1])
+
+    def get_best_value(self):
+        return self.__values[-1]
+
+    def new_generation(self, mutation_ratio):
+        if self.__count_possible_pairs() < self.__size:
+            return False
+        childs = self.__get_childs()
+        childs = self.__mutation(childs, mutation_ratio)
+        self.__genes += childs
+        self.__calculate_values()
+        self.__sort()
+        self.__genes = self.__genes[-self.__size:]
+        self.__values = self.__values[-self.__size:]
+        return True
+
+    def remake(self):
+        self.__genes[-1] = self.__small_mutation(self.__genes[-1])
+        self.__mutation_not_unique()
+        self.__calculate_values()
+        self.__sort()
+
+    def __get_childs(self):
+        if self.__count_possible_pairs() < self.__size:
+            return None
+        f_sum = sum(self.__values)
+        weights = [item / f_sum for item in self.__values]
+        parents = set()
+        while len(parents) < self.__size:
+            new_pair = self.__get_parents(self.__genes, weights)
+            parents.add(new_pair)
+        return [self.__get_child(p) for p in parents]
+
+    def __calculate_values(self):
+        self.__values = [self.__grid[tuple(g)] for g in self.__genes]
+
+    def __sort(self):
+        pairs = zip(self.__genes, self.__values)
+        pairs = sorted(pairs, key=(lambda x: x[1]))
+        self.__genes, self.__values = [list(x) for x in zip(*pairs)]
+
+    def __mutation_not_unique(self):
+        for i in range(self.__size):
+            for j in range(i + 1, self.__size):
+                if np.array_equal(self.__genes[j], self.__genes[i]):
+                    self.__genes[j] = self.__mutation_gene(self.__genes[j])
+
+    def __mutation(self, genes, proportion):
+        mutant_count = int(proportion * self.__size)
+        indices = np.random.choice(self.__size, size=mutant_count,
+                                   replace=False)
+        for index in indices:
+            genes[index] = self.__mutation_gene(genes[index])
+        return genes
+
+    def __mutation_gene(self, gene):
+        item_index = np.random.randint(2)
+        new_value = np.random.randint(self.__grid_size)
+        gene[item_index] = new_value
+        return gene
+
+    def __small_mutation(self, gene):
+        add = 1
+        if bool(np.random.randint(2)):
+            add = -1
+        index = np.random.randint(2)
+        new_item = gene[index] + add
+        if new_item >= self.__grid_size or new_item < 0:
+            add *= -1
+        gene = list(gene)
+        gene[index] += add
+        return gene
+
+    def __count_unique_genes(self):
+        return len(set(self.__genes))
+
+    def __count_possible_pairs(self):
+        unique_count = self.__count_unique_genes()
+        if unique_count < 2:
+            return 0
+        factorial = np.math.factorial
+        return factorial(unique_count) / (factorial(unique_count - 2) * 2)
+
+    @staticmethod
+    def __get_child(gene_pair):
+        first_item_parent = np.random.randint(2)
+        other_item_parent = int(not first_item_parent)
+        return (gene_pair[first_item_parent][0],
+                gene_pair[other_item_parent][1])
+
+    @staticmethod
+    def __get_parents(genes, weights):
+        indices = np.random.choice(len(genes), size=2, replace=False,
+                                   p=weights)
+        indices.sort()
+        return tuple(genes[i] for i in indices)
