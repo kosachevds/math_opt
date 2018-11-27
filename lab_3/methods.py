@@ -52,6 +52,12 @@ def genetic_search(z_grid, population_size):
     # max_list = []
     while generation_count < max_count and max(f_values) - min(f_values) > 0.05:
         childs = _get_new_generation(population, f_values)
+        if childs is None:
+            population = _mutation_not_unique(population, grid_size)
+            f_values = [z_grid[gene] for gene in population]
+            population, f_values = _sort_population(population, f_values)
+            generation_count += 1
+            continue
         _mutation(childs, 1/2, grid_size)
         childs_f = [z_grid[gene] for gene in childs]
         population += childs
@@ -59,10 +65,10 @@ def genetic_search(z_grid, population_size):
         population, f_values = _sort_population(population, f_values)
         population = population[population_size:]
         f_values = f_values[population_size:]
-        if _count_unique(population) <= np.ceil(population_size * 0.5):
-            population = _mutation_not_unique(population, grid_size)
-            f_values = [z_grid[gene] for gene in population]
-            population, f_values = _sort_population(population, f_values)
+        # if _count_unique(population) <= np.ceil(population_size * 0.5):
+        #     population = _mutation_not_unique(population, grid_size)
+        #     f_values = [z_grid[gene] for gene in population]
+        #     population, f_values = _sort_population(population, f_values)
         generation_count += 1
 
         # max_list.append(f_values[-1])
@@ -130,7 +136,7 @@ def _get_child(gene_pair):
 
 def _get_new_generation(genes, f_values):
     population_size = len(genes)
-    if _get_possible_pair_count(genes) < population_size:
+    if _count_possible_pairs(genes) < population_size:
         return None
     f_sum = sum(f_values)
     weights = [item / f_sum for item in f_values]
@@ -176,7 +182,7 @@ def _sort_population(population, f_values):
     return [list(x) for x in zip(*pairs)]
 
 
-def _get_possible_pair_count(genes):
-    unique_count = _count_unique(genes):
+def _count_possible_pairs(genes):
+    unique_count = _count_unique(genes)
     return (np.math.factorial(unique_count) /
             (np.math.factorial(unique_count - 2) * 2))
