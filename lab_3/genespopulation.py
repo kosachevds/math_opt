@@ -1,7 +1,7 @@
 import numpy as np
 
 
-class GenesPopulation(object):
+class GenesPopulation():
     __grid = None
     __genes = None
     __values = None
@@ -27,7 +27,7 @@ class GenesPopulation(object):
         if self.__count_possible_pairs() < self.__size:
             return False
         childs = self.__get_childs()
-        childs = self.__mutation(childs, mutation_ratio)
+        childs = self.__mutation(childs, mutation_ratio, self.__grid_size)
         self.__genes += childs
         self.__calculate_values()
         self.__sort()
@@ -63,22 +63,10 @@ class GenesPopulation(object):
     def __mutation_not_unique(self):
         for i in range(self.__size):
             for j in range(i + 1, self.__size):
-                if np.array_equal(self.__genes[j], self.__genes[i]):
-                    self.__genes[j] = self.__mutation_gene(self.__genes[j])
-
-    def __mutation(self, genes, proportion):
-        mutant_count = int(proportion * self.__size)
-        indices = np.random.choice(self.__size, size=mutant_count,
-                                   replace=False)
-        for index in indices:
-            genes[index] = self.__mutation_gene(genes[index])
-        return genes
-
-    def __mutation_gene(self, gene):
-        item_index = np.random.randint(2)
-        new_value = np.random.randint(self.__grid_size)
-        gene[item_index] = new_value
-        return gene
+                if not np.array_equal(self.__genes[j], self.__genes[i]):
+                    continue
+                self.__genes[j] = self.__mutation_gene(self.__genes[j],
+                                                       self.__grid_size)
 
     def __small_mutation(self, gene):
         add = 1
@@ -115,3 +103,20 @@ class GenesPopulation(object):
                                    p=weights)
         indices.sort()
         return tuple(genes[i] for i in indices)
+
+    @staticmethod
+    def __mutation(genes, proportion, grid_size):
+        mutant_count = int(proportion * len(genes))
+        indices = np.random.choice(len(genes), size=mutant_count,
+                                   replace=False)
+        for index in indices:
+            genes[index] = GenesPopulation.__mutation_gene(genes[index],
+                                                           grid_size)
+        return genes
+
+    @staticmethod
+    def __mutation_gene(gene, grid_size):
+        item_index = np.random.randint(2)
+        new_value = np.random.randint(grid_size)
+        gene[item_index] = new_value
+        return gene
