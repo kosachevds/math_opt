@@ -40,6 +40,8 @@ def simulated_annealing(z_grid, i_0, j_0):
 
 
 def genetic_search(z_grid, population_size):
+    # TODO: брать в следующую популяцию только уникальные гены,
+    # а если недостаточно, мутировать неуникальные
     max_count = 100
     grid_size = len(z_grid)
     population = np.random.randint(grid_size, size=(population_size, 2))
@@ -55,7 +57,6 @@ def genetic_search(z_grid, population_size):
         population += childs
         f_values += childs_f
         population, f_values = _sort_population(population, f_values)
-        # TODO: брать только уникальные гены, если недостаточно, мутировать неуникальные
         population = population[population_size:]
         f_values = f_values[population_size:]
         if _count_unique(population) <= np.ceil(population_size * 0.5):
@@ -129,6 +130,8 @@ def _get_child(gene_pair):
 
 def _get_new_generation(genes, f_values):
     population_size = len(genes)
+    if _get_possible_pair_count(genes) < population_size:
+        return None
     f_sum = sum(f_values)
     weights = [item / f_sum for item in f_values]
     pairs = set()
@@ -171,3 +174,9 @@ def _sort_population(population, f_values):
     pairs = list(zip(population, f_values))
     pairs.sort(key=(lambda p: p[1]))
     return [list(x) for x in zip(*pairs)]
+
+
+def _get_possible_pair_count(genes):
+    unique_count = _count_unique(genes):
+    return (np.math.factorial(unique_count) /
+            (np.math.factorial(unique_count - 2) * 2))
