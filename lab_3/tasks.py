@@ -19,6 +19,7 @@ def my_task():
     x_grid, y_grid, z_grid = read_function(funk_filename, True)
     # i_min, j_min = methods.enumerative(z_grid)
     i_min, j_min, _ = methods.simulated_annealing(z_grid, 10, 10)
+    # i_min, j_min = methods.genetic_search(z_grid, 10)
 
     axes = Axes3D(pp.figure())
     axes.plot_wireframe(x_grid, y_grid, z_grid)
