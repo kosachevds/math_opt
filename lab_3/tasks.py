@@ -86,5 +86,15 @@ def test_genetic_search(z_grid, population_size, launch_count):
         errors.append(abs(ref_z - z_grid[x_max]))
     print(np.mean(errors), np.std(errors))
 
+
+def test_my_task_annealing_search(z_grid, launch_count, i_0, j_0):
+    ref_point = methods.enumerative(z_grid)
+    ref_z = z_grid[ref_point]
+    errors = []
+    for _ in range(launch_count):
+        x_max = methods.simulated_annealing_my_task(z_grid, i_0, j_0)
+        errors.append(abs(ref_z - z_grid[x_max]))
+    print(np.mean(errors), np.std(errors))
+
 if __name__ == "__main__":
     main()
