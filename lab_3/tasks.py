@@ -18,13 +18,17 @@ def my_task():
     funk_filename = os.path.join(_CURRENT_DIR, "data/Funktsia_P4_V4.txt")
     x_grid, y_grid, z_grid = read_function(funk_filename, True)
     # i_min, j_min = methods.enumerative(z_grid)
-    i_min, j_min, _ = methods.simulated_annealing(z_grid, 10, 10)
     # i_min, j_min = methods.genetic_search(z_grid, 10)
 
+    # i_min, j_min = methods.simulated_annealing_my_task(z_grid, 10, 10)
     axes = Axes3D(pp.figure())
     axes.plot_wireframe(x_grid, y_grid, z_grid)
-    axes.scatter(x_grid[i_min, j_min], y_grid[i_min, j_min],
-                 z_grid[i_min, j_min], c="r", s=100)
+    # axes.scatter(x_grid[i_min, j_min], y_grid[i_min, j_min],
+    #              z_grid[i_min, j_min], c="r", s=100)
+    index_list = test_my_task_annealing_search(z_grid, 10, 10, 128)
+    axes.scatter(x_grid[index_list[:, 0], index_list[:, 1]],
+                 y_grid[index_list[:, 0], index_list[:, 1]],
+                 z_grid[index_list[:, 0], index_list[:, 1]], c="r", s=50)
 
 
 def common_task():
@@ -87,14 +91,17 @@ def test_genetic_search(z_grid, population_size, launch_count):
     print(np.mean(errors), np.std(errors))
 
 
-def test_my_task_annealing_search(z_grid, launch_count, i_0, j_0):
+def test_my_task_annealing_search(z_grid, i_0, j_0, launch_count):
     ref_point = methods.enumerative(z_grid)
     ref_z = z_grid[ref_point]
     errors = []
+    result_list = []
     for _ in range(launch_count):
         x_max = methods.simulated_annealing_my_task(z_grid, i_0, j_0)
         errors.append(abs(ref_z - z_grid[x_max]))
+        result_list.append(x_max)
     print(np.mean(errors), np.std(errors))
+    return np.array(result_list)
 
 if __name__ == "__main__":
     main()

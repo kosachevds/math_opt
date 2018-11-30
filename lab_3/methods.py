@@ -41,7 +41,7 @@ def simulated_annealing(z_grid, i_0, j_0):
 
 def simulated_annealing_my_task(z_grid, i_0, j_0):
     # max_k = 1000
-    max_t = 1.1
+    max_t = 43
     min_t = 0.001
     grid_size = len(z_grid)
 
@@ -69,7 +69,7 @@ def simulated_annealing_my_task(z_grid, i_0, j_0):
         t_k = temperature(k)
         # if k % 1000 == 0:
         #     d_k /= 2
-    return i_k, j_k, count
+    return i_k, j_k  # , count
 
 
 def genetic_search(z_grid, population_size):
