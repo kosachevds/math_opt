@@ -9,10 +9,21 @@ _CURRENT_DIR = os.path.dirname(__file__)
 
 
 def main():
-    # func2_filename = os.path.join(_CURRENT_DIR, "data/Funktsia_P4_V4.txt")
-    # plot_function(func2_filename, False)
-    common_task()
+    # common_task()
+    my_task()
     pp.show()
+
+
+def my_task():
+    funk_filename = os.path.join(_CURRENT_DIR, "data/Funktsia_P4_V4.txt")
+    x_grid, y_grid, z_grid = read_function(funk_filename, True)
+    # i_min, j_min = methods.enumerative(z_grid)
+    i_min, j_min, _ = methods.simulated_annealing(z_grid, 10, 10)
+
+    axes = Axes3D(pp.figure())
+    axes.plot_wireframe(x_grid, y_grid, z_grid)
+    axes.scatter(x_grid[i_min, j_min], y_grid[i_min, j_min],
+                 z_grid[i_min, j_min], c="r", s=100)
 
 
 def common_task():
