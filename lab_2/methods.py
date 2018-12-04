@@ -4,7 +4,7 @@ import onedim
 from simplex import Simplex
 
 
-def steepest_descent(func, gradient, x0, eps, eps_1d=None):
+def steepest_descent(func, gradient, x0, eps, eps_1d=None, x_min=None):
     if eps_1d is None:
         eps_1d = eps
     x_k = x0
@@ -13,7 +13,11 @@ def steepest_descent(func, gradient, x0, eps, eps_1d=None):
     while True:
         grad_k = gradient(x_k)
         count += 1
-        if _la.norm(grad_k) < eps:
+        # TODO: add one condition
+        if x_min is None:
+            if _la.norm(grad_k) < eps:
+                return x_k, count
+        elif _la.norm(x_min - x_k) < eps:
             return x_k, count
 
         def func_alpha(alpha):
@@ -29,7 +33,7 @@ def steepest_descent(func, gradient, x0, eps, eps_1d=None):
         x_k = x_k - alpha_k * grad_k
 
 
-def conjugate_gradient(func, gradient, x0, eps, eps_1d=None):
+def conjugate_gradient(func, gradient, x0, eps, eps_1d=None, x_min=None):
     if eps_1d is None:
         eps_1d = eps
     x_k = x0
@@ -38,7 +42,10 @@ def conjugate_gradient(func, gradient, x0, eps, eps_1d=None):
     count = 1
     k = 0
     while True:
-        if _la.norm(grad_k) < eps:
+        if x_min is None:
+            if _la.norm(grad_k) < eps:
+                return x_k, count
+        elif _np.linalg.norm(x_min - x_k) < eps:
             return x_k, count
 
         def func_alpha(alpha):
@@ -95,7 +102,7 @@ def regular_simplex(func, x0, eps):
             count += simplex.get_count()
 
 
-def alternating_variable(func, x0, eps, eps_1d=None):
+def alternating_variable(func, x0, eps, eps_1d=None, x_min=None):
     if eps_1d is None:
         eps_1d = eps
     x_i = x0
@@ -115,7 +122,10 @@ def alternating_variable(func, x0, eps, eps_1d=None):
                                                       eps_1d)
             count += step_count
             x_i = x_i + alpha_j * e_j
-        if abs(func(x_old) - func(x_i)) <= eps:
+        if x_min is None:
+            if abs(func(x_old) - func(x_i)) <= eps:
+                return x_i, count
+        elif _np.linalg.norm(x_min - x_i) < eps:
             return x_i, count
 
 
