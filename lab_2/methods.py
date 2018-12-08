@@ -13,7 +13,7 @@ def steepest_descent(func, gradient, x0, eps, eps_1d=None, x_min=None):
     while True:
         grad_k = gradient(x_k)
         count += 1
-        # TODO: add one condition
+        # TODO: with single condition
         if x_min is None:
             if _la.norm(grad_k) < eps:
                 return x_k, count

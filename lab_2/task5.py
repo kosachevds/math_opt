@@ -20,6 +20,9 @@ def main():
     pp.show()
 
 
+# def plot_counts_with_passed_xmin(eps_list):
+#     for i
+
 def plot_counts(eps_list, eps_1d_list):
     for i, eps in enumerate(eps_list):
         eps_log = np.log10(eps)
@@ -57,6 +60,11 @@ def plot_errors(eps_list, eps_1d_list):
         pp.gca().invert_xaxis()
         pp.legend()
 
+
+# def plot_method_counts_with_passed_xmin(method, with_gradient, eps_list, label):
+#     if with_gradient:
+#         pairs = [method(rosenbrock, rosenbrock_gradient, X_0, eps, x_min=X_MIN)
+#                  for eps in eps_list]
 
 def plot_method_counts(method, with_gradient, eps, eps_1d_list, label=None):
     if with_gradient:
